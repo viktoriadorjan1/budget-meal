@@ -1,0 +1,124 @@
+class Ingredient {
+  String _storeName = "";
+  String _ingredientName = "";
+  double _quantity = 0;
+  String _unit = "";
+  NutritionalInformation _nutritionalInfo = NutritionalInformation();
+  double _totalPrice = 0;
+  double _perUnitPrice = 0;
+  String _storage = "";
+  ExpiryInformation _expiryInfo = ExpiryInformation();
+
+  Ingredient(IngredientBuilder builder) {
+    _storeName = builder._storeName;
+    _ingredientName = builder._ingredientName;
+    _quantity = builder._quantity;
+    _unit = builder._unit;
+    _nutritionalInfo = builder._nutritionalInfo;
+    _totalPrice = builder._totalPrice;
+    _perUnitPrice = builder._perUnitPrice;
+    _storage = builder._storage;
+    _expiryInfo = builder._expiryInfo;
+  }
+
+  String getUnit() {
+    return _unit;
+  }
+
+  double getQuantity() {
+    return _quantity;
+  }
+
+  String getIngredientName() {
+    return _ingredientName;
+  }
+
+  void updateQuantity(double newQuantity) {
+    _quantity = newQuantity;
+  }
+
+  double getPerUnitPrice() {
+    return _perUnitPrice;
+  }
+
+  double getTotalPrice() {
+    return _totalPrice;
+  }
+
+  void buy() {
+    _perUnitPrice = 0;
+    _totalPrice = 0;
+  }
+}
+
+class IngredientBuilder {
+  String _storeName = "";
+  String _ingredientName = "";
+  double _quantity = 0;
+  String _unit = "";
+  NutritionalInformation _nutritionalInfo = NutritionalInformation();
+  double _totalPrice = 0;
+  double _perUnitPrice = 0;
+  String _storage = "";
+  ExpiryInformation _expiryInfo = ExpiryInformation();
+
+  IngredientBuilder();
+
+  Ingredient build() {
+    if (_quantity > 0) _perUnitPrice = _totalPrice / _quantity;
+    Ingredient ingredient = Ingredient(this);
+    return ingredient;
+  }
+
+  IngredientBuilder fromStore(String storeName) {
+    _storeName = storeName;
+    return this;
+  }
+
+  IngredientBuilder withIngredientName(String ingredientName) {
+    _ingredientName = ingredientName;
+    return this;
+  }
+
+  IngredientBuilder withAmount(double quantity, String unit) {
+    _quantity = quantity;
+    _unit = unit;
+    return this;
+  }
+
+  IngredientBuilder withNutritionalInfo(NutritionalInformation nutritionalInfo) {
+    _nutritionalInfo = nutritionalInfo;
+    return this;
+  }
+
+  IngredientBuilder withTotalPrice(double totalPrice) {
+    _totalPrice = totalPrice;
+    return this;
+  }
+
+  IngredientBuilder inStorage(String storage) {
+    _storage = storage;
+    return this;
+  }
+
+  IngredientBuilder withExpiry(ExpiryInformation expiryInfo) {
+    _expiryInfo = expiryInfo;
+    return this;
+  }
+
+}
+
+class ExpiryInformation {
+  // key: storage method (e.g. cupboard, fridge, freezer), value: days until expiry
+  Map<String, int> expiryInfo = {};
+}
+
+class NutritionalInformation {
+  double fat = 0;
+  double saturates = 0;
+  double carbs = 0;
+  double sugars = 0;
+  double fibre = 0;
+  double protein = 0;
+  double salt = 0;
+}
