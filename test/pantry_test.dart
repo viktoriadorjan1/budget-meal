@@ -25,15 +25,17 @@ void main() {
   test('putInPantry deletes price of ingredient', () {
     Pantry pantry = Pantry();
 
-    assert (pantry.length() == 0);
-    assert (egg.getTotalPrice() == 1.5);
-    assert (egg.getPerUnitPrice() == (1.5 / 6));
+    Ingredient bacon = IngredientBuilder().withIngredientName("bacon").withTotalPrice(1.5).withAmount(6, 'pieces').build();
 
-    pantry.putInPantry(egg);
+    assert (pantry.length() == 0);
+    assert (bacon.getTotalPrice() == 1.5);
+    assert (bacon.getPerUnitPrice() == (1.5 / 6));
+
+    pantry.putInPantry(bacon);
 
     assert (pantry.length() == 1);
-    assert (egg.getTotalPrice() == 0);
-    assert (egg.getPerUnitPrice() == 0);
+    assert (bacon.getTotalPrice() == 0);
+    assert (bacon.getPerUnitPrice() == 0);
 
   });
 
