@@ -1,26 +1,68 @@
+import 'dart:convert';
+
 import 'package:budget_meal/ingredient.dart';
-import 'package:budget_meal/webshop.dart';
 
 import 'Pantry.dart';
 import 'RecipeBook.dart';
 
 class MealPlanner {
-  // given a pantry (all ingredients owned by used),
+  // given a pantry (all ingredients owned by user),
   // a recipebook (all recipes owned by user),
   // and a webshop (all ingredients needed for the given recipes)
-  void createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) async {
+  //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
+  String createMealPlan() {
+    // TODO: Replace with real json
+    return jsonEncode({
+      "recipe": ["cereal", "sandwich"],
+      "ingredient": ["milk", "cereal_flakes", "bread"],
+      "nutrient": ["protein", "carbs"],
+      "pantry_item": {
+        "milk": 200,
+        "cereal_flakes": 400,
+        "bread": 100
+      },
+      "i_costs": {
+        "milk": [100, 2.00],
+        "cereal_flakes": [400, 4.00],
+        "bread": [1000, 1.00]
+      },
+      "nutrient_needed": {
+        "protein": [50, 80]
+      },
+      "has_nutrient": {
+        "cereal": {
+          "protein": 50
+        }
+      },
+      "needs": {
+        "cereal": {
+          "cereal_flakes": 300,
+          "milk": 300
+        },
+        "sandwich": {
+          "bread": 200
+        }
+      }
+    });
+
+
+
     // TODO: mealplan (as a file)
     
     // TODO: replace testPantry with real pantry
-    pantry = generateTestPantry();
+    //pantry = generateTestPantry();
     // TODO: replace testRecipeBook with real recipeBook
-    recipeBook = generateTestRecipeBook();
+    //recipeBook = generateTestRecipeBook();
 
-    WebShop webShop = WebShop();
-    webShop.fillWebShop(recipeBook);
+    //WebShop webShop = WebShop();
+    //webShop.fillWebShop(recipeBook);
 
     // TODO: shopping list
-    List<IngredientBuilder> shopping_list = [];
+    //List<IngredientBuilder> shopping_list = [];
+
+    //var process = await Process.start('cat', []);
+    //print(process.stdout);
+    //process.stdin.writeln('clingo --version');
 
   }
 
