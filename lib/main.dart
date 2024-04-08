@@ -52,9 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
               'This is my new text',
             ),
             ElevatedButton(
-              onPressed: () async {
-                String text = await generateMealPlan();
-                print(text);
+              onPressed: () {
+                generateMealPlan();
               },
               child: const Text("Generate meal plan"),
             )
@@ -64,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<String> generateMealPlan() async {
+  void generateMealPlan() async {
     const serverUrl = "https://budget-meal.onrender.com/";
 
     var response = await http.post(Uri.parse(serverUrl),
@@ -76,9 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (response.statusCode == 200) {
       print("Body: ${response.body}");
-      return "Post created successfully!";
     }
-
-    return "Failed to create post!";
   }
 }

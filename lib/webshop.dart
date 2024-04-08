@@ -22,4 +22,8 @@ class WebShop {
   List<Ingredient> getWebShopItems() {
     return _webShopItems;
   }
+
+  void addWebShopItem(Ingredient ingredient) {
+    _webShopItems.add(ingredient);
+  }
 }

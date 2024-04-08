@@ -7,6 +7,14 @@ class RecipeBook {
     return _recipes;
   }
 
+  List<String> getRecipeNames() {
+    List<String> recipenames = [];
+    for (Recipe r in _recipes) {
+      recipenames.add(r.getRecipeName());
+    }
+    return recipenames;
+  }
+
   void addRecipe(Recipe newRecipe) {
     _recipes.add(newRecipe);
   }

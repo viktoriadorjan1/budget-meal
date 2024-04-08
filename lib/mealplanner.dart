@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:budget_meal/ingredient.dart';
+import 'package:budget_meal/webshop.dart';
 
 import 'Pantry.dart';
 import 'RecipeBook.dart';
@@ -11,6 +12,24 @@ class MealPlanner {
   // and a webshop (all ingredients needed for the given recipes)
   //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
   String createMealPlan() {
+    String json = "";
+
+    // TODO: replace testPantry with real pantry
+    //Pantry pantry = generateTestPantry();
+    // TODO: replace testRecipeBook with real recipeBook
+    RecipeBook recipeBook = generateTestRecipeBook();
+    // TODO: replace testWebShop with real WebShop
+    //WebShop webShop = generateWebShop();
+
+    List<String> recipeNames = recipeBook.getRecipeNames();
+
+
+    json += jsonEncode({
+      "recipe": recipeNames
+    });
+
+    print(json);
+
     // TODO: Replace with real json
     return jsonEncode({
       "recipe": ["cereal", "sandwich"],
@@ -71,16 +90,16 @@ class MealPlanner {
   Pantry generateTestPantry() {
     Pantry testPantry = Pantry();
 
-    // 250g mushroom from Tesco, stored in fridge, for £1.1
-    Ingredient ownMushroom = IngredientBuilder().withIngredientName("mushroom").fromStore("Tesco").withAmount(250, 'grams').withTotalPrice(1.1).inStorage('fridge').build();
-    // 6 eggs from Tesco, stored in fridge, for £1.5
-    Ingredient ownEgg = IngredientBuilder().withIngredientName("egg").fromStore("Tesco").withAmount(6, 'pieces').withTotalPrice(1.5).inStorage('fridge').build();
-    // 100g salt we found in the cupboard
-    Ingredient ownSalt = IngredientBuilder().withIngredientName("salt").inStorage('cupboard').build();
+    // 200 ml milk stored in fridge
+    Ingredient ownMilk = IngredientBuilder().withIngredientName("milk").withAmount(200, 'ml').inStorage('fridge').build();
+    // 400 g of cereal flakes
+    Ingredient ownCereal = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').build();
+    // 100g bread in the cupboard
+    Ingredient ownBread = IngredientBuilder().withIngredientName("bread").withAmount(100, 'g').inStorage('cupboard').build();
 
-    testPantry.putInPantry(ownMushroom);
-    testPantry.putInPantry(ownEgg);
-    testPantry.putInPantry(ownSalt);
+    testPantry.putInPantry(ownMilk);
+    testPantry.putInPantry(ownCereal);
+    testPantry.putInPantry(ownBread);
 
     return testPantry;
   }
@@ -89,59 +108,44 @@ class MealPlanner {
   RecipeBook generateTestRecipeBook() {
     RecipeBook testRecipeBook = RecipeBook();
 
-    // mushroom soup recipe
-    Ingredient mushroom = IngredientBuilder().withIngredientName("mushroom").withAmount(300, 'grams').build();
-    Ingredient rice = IngredientBuilder().withIngredientName("rice").withAmount(500, 'grams').build();
-    Ingredient onion = IngredientBuilder().withIngredientName("onion").withAmount(1, 'pieces').build();
-    Ingredient flour = IngredientBuilder().withIngredientName("flour").withAmount(1, 'tablespoons').build();
-    Ingredient parsley = IngredientBuilder().withIngredientName("parsley").withAmount(0, 'to taste').build();
-    Ingredient oil = IngredientBuilder().withIngredientName("oil").withAmount(1, 'tablespoons').build();
-    Ingredient mustard = IngredientBuilder().withIngredientName("mustard").withAmount(0, 'to taste').build();
-    Ingredient blackPepper = IngredientBuilder().withIngredientName("black pepper").withAmount(0, 'to taste').build();
-    Ingredient salt = IngredientBuilder().withIngredientName("mustard").withAmount(0, 'to taste').build();
+    // cereal recipe
+    Ingredient milk = IngredientBuilder().withIngredientName("milk").withAmount(300, 'ml').build();
+    Ingredient cereal_flakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
 
-    List<Ingredient> msIngredients = [];
-    msIngredients.add(mushroom);
-    msIngredients.add(rice);
-    msIngredients.add(onion);
-    msIngredients.add(flour);
-    msIngredients.add(parsley);
-    msIngredients.add(oil);
-    msIngredients.add(mustard);
-    msIngredients.add(blackPepper);
-    msIngredients.add(salt);
+    List<Ingredient> ceIngredients = [];
+    ceIngredients.add(milk);
+    ceIngredients.add(cereal_flakes);
 
-    Recipe mushroomSoupRecipe = Recipe("mushroom soup", 4, msIngredients, false);
+    Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, false);
 
-    // fried egg recipe
-    Ingredient egg = IngredientBuilder().withIngredientName("egg").withAmount(2, 'pieces').build();
+    // sandwich recipe
+    Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(200, 'g').build();
 
-    List<Ingredient> feIngredients = [];
-    feIngredients.add(egg);
-    feIngredients.add(salt);
-    feIngredients.add(blackPepper);
-    feIngredients.add(oil);
+    List<Ingredient> saIngredients = [];
+    saIngredients.add(bread);
 
-    Recipe friedEggRecipe = Recipe("fried egg", 1, feIngredients, false);
+    Recipe sandwichRecipe = Recipe("sandwich", 1, saIngredients, false);
 
-    // peanutbutter and jam sandwich
-    Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(1, 'slices').build();
-    Ingredient pb = IngredientBuilder().withIngredientName("peanut butter").withAmount(0, "to taste").build();
-    Ingredient jam = IngredientBuilder().withIngredientName("jam").withAmount(0, "to taste").build();
-
-    List<Ingredient> pbjIngredients = [];
-    pbjIngredients.add(bread);
-    pbjIngredients.add(pb);
-    pbjIngredients.add(jam);
-
-    Recipe pbAndJamSandwichRecipe = Recipe("peanutbutter and jam sandwich", 1, pbjIngredients, false);
-
-    testRecipeBook.addRecipe(mushroomSoupRecipe);
-    testRecipeBook.addRecipe(friedEggRecipe);
-    testRecipeBook.addRecipe(pbAndJamSandwichRecipe);
+    testRecipeBook.addRecipe(cerealRecipe);
+    testRecipeBook.addRecipe(sandwichRecipe);
 
     return testRecipeBook;
   }
+
+  WebShop generateWebShop() {
+    WebShop testWebShop = WebShop();
+
+    Ingredient shopMilk = IngredientBuilder().withIngredientName("milk").withAmount(100, 'g').withTotalPrice(200).build();
+    Ingredient shopBread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').withTotalPrice(100).build();
+    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').withTotalPrice(400).build();
+
+    testWebShop.addWebShopItem(shopMilk);
+    testWebShop.addWebShopItem(shopBread);
+    testWebShop.addWebShopItem(shopCerealFlakes);
+
+    return testWebShop;
+  }
+
 }
 
 
