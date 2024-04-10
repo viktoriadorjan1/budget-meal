@@ -12,48 +12,35 @@ class MealPlanner {
   // and a webshop (all ingredients needed for the given recipes)
   //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
   String createMealPlan() {
-    String json = "";
-
     // TODO: replace testPantry with real pantry
-    //Pantry pantry = generateTestPantry();
+    Pantry pantry = generateTestPantry();
     // TODO: replace testRecipeBook with real recipeBook
     RecipeBook recipeBook = generateTestRecipeBook();
     // TODO: replace testWebShop with real WebShop
-    //WebShop webShop = generateWebShop();
+    WebShop webShop = generateWebShop();
 
-    List<String> recipeNames = recipeBook.getRecipeNames();
-
-
-    json += jsonEncode({
-      "recipe": recipeNames
-    });
-
-    print(json);
-
-    // TODO: Replace with real json
-    return jsonEncode({
-      "recipe": ["cereal", "sandwich"],
-      "ingredient": ["milk", "cereal_flakes", "bread"],
-      "nutrient": ["protein", "carbs"],
+    Map<String, dynamic> generateJson() => {
+      "recipe": recipeBook.getRecipeNames(normalised: true),
+      "nutrient": ["protein", "fats", "carbs"],
       "pantry_item": {
-        "milk": 200,
-        "cereal_flakes": 400,
-        "bread": 100
+        for (Ingredient i in pantry.getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
       },
       "i_costs": {
-        "milk": [100, 2.00],
-        "cereal_flakes": [400, 4.00],
-        "bread": [1000, 1.00]
+        for (Ingredient w in webShop.getWebShopItems()) w.getIngredientName(normalised: true) : [w.getQuantity(), w.getTotalPrice()]
       },
       "nutrient_needed": {
-        "protein": [50, 80]
+        "protein": [50, 80],
+        //"fats": [18, 31],
+        //"carbs": [34, 156]
       },
       "has_nutrient": {
         "cereal": {
+        //for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(): {
           "protein": 50
         }
       },
       "needs": {
+        //for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(): {}
         "cereal": {
           "cereal_flakes": 300,
           "milk": 300
@@ -62,9 +49,11 @@ class MealPlanner {
           "bread": 200
         }
       }
-    });
+    };
 
-
+    var finalJson = jsonEncode(generateJson());
+    print(finalJson);
+    return finalJson;
 
     // TODO: mealplan (as a file)
     
@@ -135,9 +124,9 @@ class MealPlanner {
   WebShop generateWebShop() {
     WebShop testWebShop = WebShop();
 
-    Ingredient shopMilk = IngredientBuilder().withIngredientName("milk").withAmount(100, 'g').withTotalPrice(200).build();
-    Ingredient shopBread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').withTotalPrice(100).build();
-    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').withTotalPrice(400).build();
+    Ingredient shopMilk = IngredientBuilder().withIngredientName("milk").withAmount(100, 'g').withTotalPrice(2.00).build();
+    Ingredient shopBread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').withTotalPrice(1.00).build();
+    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').withTotalPrice(4.00).build();
 
     testWebShop.addWebShopItem(shopMilk);
     testWebShop.addWebShopItem(shopBread);

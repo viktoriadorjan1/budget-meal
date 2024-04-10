@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'ingredient.dart';
 
 class Pantry {
@@ -16,7 +18,7 @@ class Pantry {
     _ingredients.remove(ingredient);
   }
 
-  useFromPantry(Ingredient ingredient, double amountToUse, String unitToUse) {
+  useFromPantry(Ingredient ingredient, int amountToUse, String unitToUse) {
     // check if ingredient exists in pantry.
     if (!_ingredients.contains(
         ingredient)) throw "Pantry does not contain this ingredient";
@@ -29,7 +31,7 @@ class Pantry {
 
     if (pantryUnit != unitToUse) {} // TODO: convert units
 
-    double pantryItemQuantity = pantryItem.getQuantity();
+    int pantryItemQuantity = pantryItem.getQuantity();
     if (pantryItemQuantity < amountToUse) {
       throw "Pantry does not have enough of this ingredient";
     }

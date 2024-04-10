@@ -7,12 +7,16 @@ class RecipeBook {
     return _recipes;
   }
 
-  List<String> getRecipeNames() {
-    List<String> recipenames = [];
+  List<String> getRecipeNames({bool? normalised}) {
+    List<String> recipeNames = [];
     for (Recipe r in _recipes) {
-      recipenames.add(r.getRecipeName());
+      if (normalised == null || !normalised) {
+        recipeNames.add(r.getRecipeName());
+      } else {
+        recipeNames.add(r.getRecipeName(normalised: true));
+      }
     }
-    return recipenames;
+    return recipeNames;
   }
 
   void addRecipe(Recipe newRecipe) {
@@ -40,8 +44,12 @@ class Recipe {
     return _ingredients;
   }
 
-  String getRecipeName() {
-    return _recipeName;
+  String getRecipeName({bool? normalised}) {
+    if (normalised == null || !normalised) {
+      return _recipeName;
+    } else {
+      return _recipeName.replaceAll(' ', '_');
+    }
   }
 
 }

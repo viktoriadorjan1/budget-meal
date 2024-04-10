@@ -65,8 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void generateMealPlan() async {
     const serverUrl = "https://budget-meal.onrender.com/";
+    const localUrl = "http://10.0.2.2:3306";
 
-    var response = await http.post(Uri.parse(serverUrl),
+    var response = await http.post(Uri.parse(localUrl),
         headers: {"Content-Type": "application/json"},
         body: _mealPlanner.createMealPlan()
         );

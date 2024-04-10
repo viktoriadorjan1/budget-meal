@@ -1,11 +1,11 @@
 class Ingredient {
   String _storeName = "";
   String _ingredientName = "";
-  double _quantity = 0;
+  int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
   double _totalPrice = 0;
-  double _perUnitPrice = 0;
+  //int _perUnitPrice = 0;
   String _storage = "";
   ExpiryInformation _expiryInfo = ExpiryInformation();
 
@@ -16,7 +16,7 @@ class Ingredient {
     _unit = builder._unit;
     _nutritionalInfo = builder._nutritionalInfo;
     _totalPrice = builder._totalPrice;
-    _perUnitPrice = builder._perUnitPrice;
+    //_perUnitPrice = builder._perUnitPrice;
     _storage = builder._storage;
     _expiryInfo = builder._expiryInfo;
   }
@@ -25,28 +25,29 @@ class Ingredient {
     return _unit;
   }
 
-  double getQuantity() {
+  int getQuantity() {
     return _quantity;
   }
 
-  String getIngredientName() {
-    return _ingredientName;
+  String getIngredientName({bool? normalised}) {
+    if (normalised == null || !normalised) return _ingredientName;
+    return _ingredientName.replaceAll(' ', '_');
   }
 
-  void updateQuantity(double newQuantity) {
+  void updateQuantity(int newQuantity) {
     _quantity = newQuantity;
   }
 
-  double getPerUnitPrice() {
-    return _perUnitPrice;
-  }
+  //int getPerUnitPrice() {
+  //  return _perUnitPrice;
+  //}
 
   double getTotalPrice() {
     return _totalPrice;
   }
 
   void buy() {
-    _perUnitPrice = 0;
+    //_perUnitPrice = 0;
     _totalPrice = 0;
   }
 }
@@ -54,18 +55,18 @@ class Ingredient {
 class IngredientBuilder {
   String _storeName = "";
   String _ingredientName = "";
-  double _quantity = 0;
+  int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
   double _totalPrice = 0;
-  double _perUnitPrice = 0;
+  //int _perUnitPrice = 0;
   String _storage = "";
   ExpiryInformation _expiryInfo = ExpiryInformation();
 
   IngredientBuilder();
 
   Ingredient build() {
-    if (_quantity > 0) _perUnitPrice = _totalPrice / _quantity;
+    //if (_quantity > 0) _perUnitPrice = _totalPrice / _quantity;
     Ingredient ingredient = Ingredient(this);
     return ingredient;
   }
@@ -80,7 +81,7 @@ class IngredientBuilder {
     return this;
   }
 
-  IngredientBuilder withAmount(double quantity, String unit) {
+  IngredientBuilder withAmount(int quantity, String unit) {
     _quantity = quantity;
     _unit = unit;
     return this;
