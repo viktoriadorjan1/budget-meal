@@ -16,16 +16,12 @@ class MealPlanner {
     Pantry pantry = generateTestPantry();
     // TODO: replace testRecipeBook with real recipeBook
     RecipeBook recipeBook = generateTestRecipeBook();
-    // TODO: replace testWebShop with real WebShop
-    WebShop webShop = generateWebShop();
 
     Map<String, dynamic> generateJson() => {
+      "ingredient": ["milk", "cereal", "bread"], // TODO: replace with real ingredients
       "recipe": recipeBook.getRecipeNames(normalised: true),
       "pantry_item": {
         for (Ingredient i in pantry.getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
-      },
-      "i_costs": {
-        for (Ingredient w in webShop.getWebShopItems()) w.getIngredientName(normalised: true) : [w.getQuantity(), w.getTotalPrice()]
       },
       "nutrient_needed": {
         "protein": [50, 80],
