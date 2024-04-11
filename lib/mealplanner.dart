@@ -21,7 +21,6 @@ class MealPlanner {
 
     Map<String, dynamic> generateJson() => {
       "recipe": recipeBook.getRecipeNames(normalised: true),
-      "nutrient": ["protein", "fats", "carbs"],
       "pantry_item": {
         for (Ingredient i in pantry.getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
       },
