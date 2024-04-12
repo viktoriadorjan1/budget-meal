@@ -17,8 +17,15 @@ class MealPlanner {
     // TODO: replace testRecipeBook with real recipeBook
     RecipeBook recipeBook = generateTestRecipeBook();
 
+    List<String> ingredients = [];
+    for (Recipe recipe in recipeBook.getRecipes()) {
+      for (Ingredient ingredient in recipe.getIngredients()) {
+        ingredients.add(ingredient.getIngredientName());
+      }
+    }
+
     Map<String, dynamic> generateJson() => {
-      "ingredient": ["milk", "cereal", "bread"], // TODO: replace with real ingredients
+      "ingredient": ingredients,
       "recipe": recipeBook.getRecipeNames(normalised: true),
       "pantry_item": {
         for (Ingredient i in pantry.getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
@@ -94,11 +101,11 @@ class MealPlanner {
 
     // cereal recipe
     Ingredient milk = IngredientBuilder().withIngredientName("milk").withAmount(300, 'ml').build();
-    Ingredient cereal_flakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
+    Ingredient cerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
 
     List<Ingredient> ceIngredients = [];
     ceIngredients.add(milk);
-    ceIngredients.add(cereal_flakes);
+    ceIngredients.add(cerealFlakes);
 
     Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, false);
 
@@ -121,7 +128,7 @@ class MealPlanner {
 
     Ingredient shopMilk = IngredientBuilder().withIngredientName("milk").withAmount(100, 'g').withTotalPrice(2.00).build();
     Ingredient shopBread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').withTotalPrice(1.00).build();
-    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').withTotalPrice(4.00).build();
+    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal").withAmount(400, 'g').withTotalPrice(4.00).build();
 
     testWebShop.addWebShopItem(shopMilk);
     testWebShop.addWebShopItem(shopBread);
