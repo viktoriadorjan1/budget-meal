@@ -1,5 +1,5 @@
-import 'RecipeBook.dart';
-import 'ingredient.dart';
+import '../RecipeBook/RecipeBookModel.dart';
+import '../RecipeBook/IngredientModel.dart';
 
 class WebShop {
   List<Ingredient> _webShopItems = [];

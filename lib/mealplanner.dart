@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:budget_meal/ingredient.dart';
-import 'package:budget_meal/webshop.dart';
+import 'package:budget_meal/RecipeBook/IngredientModel.dart';
+import 'package:budget_meal/WebStore/webshop.dart';
 
-import 'Pantry.dart';
-import 'RecipeBook.dart';
+import 'Pantry/PantryModel.dart';
+import 'RecipeBook/RecipeBookModel.dart';
 
 class MealPlanner {
   // given a pantry (all ingredients owned by user),

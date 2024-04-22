@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'ingredient.dart';
+import '../RecipeBook/IngredientModel.dart';
 
 class Pantry {
   final List<Ingredient> _ingredients = [];

@@ -1,9 +1,10 @@
-import 'package:budget_meal/mealplanner.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-
-MealPlanner _mealPlanner = MealPlanner();
+import 'RecipeBook/RecipeBookView.dart';
+import 'Pantry/PantryView.dart';
+import 'WebStore/ShoppingList.dart';
+import 'Settings/SettingsView.dart';
+import 'Mealplan/MealplanView.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,14 +16,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //_mealPlanner.createMealPlan(Pantry(), RecipeBook(), WebShop());
-
-    return MaterialApp(
-      title: 'BudgetMeal',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'BudgetMeal Home Page'),
+    return const MaterialApp(
+      home: MyHomePage(title: 'BudgetMeal Home Page'),
     );
   }
 }
@@ -38,44 +33,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  int _currentIndex = 2;
+
+  final List _pages = [
+    Recipes(),
+    Pantry(),
+    Schedule(),
+    Shopping(),
+    More()
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'This is my new text',
-            ),
-            ElevatedButton(
-              onPressed: () {
-                generateMealPlan();
-              },
-              child: const Text("Generate meal plan"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void generateMealPlan() async {
-    const serverUrl = "https://budget-meal.onrender.com/";
-    const localUrl = "http://10.0.2.2:3306";
-
-    var response = await http.post(Uri.parse(localUrl),
-        headers: {"Content-Type": "application/json"},
-        body: _mealPlanner.createMealPlan()
-        );
-
-    print("Code: ${response.statusCode}");
-
-    if (response.statusCode == 200) {
-      print("Body: ${response.body}");
-    }
+      backgroundColor: const Color(0xFFCFCFCF),
+      body: _pages[_currentIndex],
+    bottomNavigationBar: BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color(0xFF26BDC6),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.menu_book_outlined), label: 'Recipes'),
+        BottomNavigationBarItem(icon: Icon(Icons.bakery_dining_rounded), label: 'Pantry'),
+        BottomNavigationBarItem(icon: Icon(Icons.auto_stories), label: 'Schedule'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'To buy'),
+        BottomNavigationBarItem(icon: Icon(Icons.more_outlined), label: 'More'),
+      ],
+      currentIndex: _currentIndex,
+      selectedItemColor: Colors.white,
+      onTap: (index) => setState(() {
+        _currentIndex = index;
+      }),
+    ));
   }
 }
+

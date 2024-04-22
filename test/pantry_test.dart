@@ -1,5 +1,5 @@
-import 'package:budget_meal/Pantry.dart';
-import 'package:budget_meal/ingredient.dart';
+import 'package:budget_meal/Pantry/PantryModel.dart';
+import 'package:budget_meal/RecipeBook/IngredientModel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Ingredient egg = IngredientBuilder().withIngredientName("egg").withTotalPrice(1.5).withAmount(6, 'pieces').build();

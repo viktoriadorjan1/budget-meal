@@ -1,4 +1,4 @@
-import 'ingredient.dart';
+import 'IngredientModel.dart';
 
 class RecipeBook {
   List<Recipe> _recipes = [];
