@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final List _pages = [
       Recipes(context, widget.recipeBook),
       Pantry(),
-      Schedule(),
+      Schedule(widget.recipeBook),
       Shopping(),
       More()
     ];

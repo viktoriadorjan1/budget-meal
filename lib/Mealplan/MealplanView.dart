@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import '../RecipeBook/RecipeBookModel.dart';
 import 'MealplanModel.dart';
 
-Widget Schedule() {
+Widget Schedule(RecipeBook recipeBook) {
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         ElevatedButton(
           onPressed: () {
-            generateMealPlan();
+            generateMealPlan(recipeBook);
           },
           child: const Text("Generate meal plan"),
         )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 import '../main.dart';
 import 'IngredientModel.dart';
 import 'RecipeBookModel.dart';
@@ -35,21 +36,28 @@ class NewRecipeForm extends StatefulWidget {
   State<NewRecipeForm> createState() => _NewRecipeFormState();
 }
 
-List<String> ingredientNames = <String>['Eggs', 'Cheese', 'Milk'];
-
 class _NewRecipeFormState extends State<NewRecipeForm> {
   final _key = GlobalKey<FormState>();
 
+  // New recipe properties
   String recipeName = "";
   String category = "";
   int portionSize = 0;
   List<Ingredient> ingredients = [];
 
+  // TODO: replace with pre-defined ingredients
+  List<Ingredient> ingredientOptions = [];
 
-  String dropdownval = ingredientNames.first;
+  Ingredient milk = IngredientBuilder().withIngredientName("milk").withAmount(300, 'ml').build();
+  Ingredient cerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
+  Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').build();
 
   @override
   Widget build(BuildContext context) {
+    ingredientOptions.add(milk);
+    ingredientOptions.add(cerealFlakes);
+    ingredientOptions.add(bread);
+
     return Form(
       key: _key,
       child: Column(
@@ -88,19 +96,22 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               return null;
             },
           ),
-        DropdownButton<String>(
-          value: dropdownval,
-          items: ingredientNames.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            setState(() {
-              dropdownval = value!;
-            });
-        }),
+          MultiSelectDropDown(
+            onOptionSelected: (options) {
+              for (var element in options) {
+                for (Ingredient i in ingredientOptions) {
+                  if (i.getIngredientName() == element.label && !ingredients.contains(i)) {
+                    ingredients.add(i);
+                  }
+                }
+              }
+            },
+            options: const <ValueItem>[
+              ValueItem(label: 'milk', value: '1'),
+              ValueItem(label: 'cereal flakes', value: '2'),
+              ValueItem(label: 'bread', value: '3'),
+            ],
+          ),
         ElevatedButton(onPressed: () {
           if (_key.currentState!.validate()) {
             ScaffoldMessenger.of(context).showSnackBar(

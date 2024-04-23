@@ -11,11 +11,11 @@ class MealPlanner {
   // a recipebook (all recipes owned by user),
   // and a webshop (all ingredients needed for the given recipes)
   //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
-  String createMealPlan() {
+  String createMealPlan(RecipeBook recipeBook) {
     // TODO: replace testPantry with real pantry
     Pantry pantry = generateTestPantry();
     // TODO: replace testRecipeBook with real recipeBook
-    RecipeBook recipeBook = generateTestRecipeBook();
+    //RecipeBook recipeBook = generateTestRecipeBook();
 
     List<String> ingredients = [];
     for (Recipe recipe in recipeBook.getRecipes()) {
