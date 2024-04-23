@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'RecipeBook/RecipeBookModel.dart';
+
 double getScreenWidth() {
   FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
   Size size = view.physicalSize / view.devicePixelRatio;
@@ -31,5 +33,24 @@ Widget TitleBar(String title) {
         borderRadius: const BorderRadius.only(topRight: Radius.circular(15), bottomRight: Radius.circular(15))
     ),
     child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold)),
+  );
+}
+
+Widget MyListTile(String title) {
+  return Container(
+      width: getScreenWidth() * 0.8,
+      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 20),
+      decoration: BoxDecoration(
+          color: const Color(0xFFF3F9F6),
+          border: Border.all(color: const Color(0xFF26BDC6), width: 3),
+          borderRadius: const BorderRadius.all(Radius.circular(15))
+      ),
+      child: Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
+  );
+}
+
+Widget AddButton(String title) {
+  return ElevatedButton(onPressed: () {},
+    child: Text(title),
   );
 }

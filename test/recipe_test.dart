@@ -78,4 +78,24 @@ void main() {
 
   });
 
+  test('empty recipe book returns empty list when searched by category', () {
+    RecipeBook recipeBook = RecipeBook();
+
+    assert (recipeBook.getRecipesWithCategory("Uncategorised").isEmpty);
+
+  });
+
+  test('recipe book with one recipe returns correct list when searched by category', () {
+    RecipeBook recipeBook = RecipeBook();
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], false);
+
+    recipeBook.addRecipe(cerealRecipe);
+
+    assert (recipeBook.getRecipesWithCategory("Uncategorised").length == 1);
+    assert (recipeBook.getRecipesWithCategory("Uncategorised").first == cerealRecipe);
+
+    assert (recipeBook.getRecipesWithCategory("Breakfast").isEmpty);
+
+  });
+
 }

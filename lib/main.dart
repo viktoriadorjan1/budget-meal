@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'RecipeBook/RecipeBookModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
 import 'WebStore/ShoppingList.dart';
@@ -7,44 +8,44 @@ import 'Settings/SettingsView.dart';
 import 'Mealplan/MealplanView.dart';
 
 void main() {
-  runApp(const MyApp());
+  RecipeBook recipeBook = RecipeBook();
+  runApp(MyApp(recipeBook: recipeBook));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({required this.recipeBook, super.key});
+  final RecipeBook recipeBook;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(title: 'BudgetMeal Home Page'),
+    return MaterialApp(
+      home: MyHomePage(recipeBook: recipeBook),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({required this.recipeBook, super.key});
+  final RecipeBook recipeBook;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  int _currentIndex = 2;
-
-  final List _pages = [
-    Recipes(),
-    Pantry(),
-    Schedule(),
-    Shopping(),
-    More()
-  ];
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final List _pages = [
+      Recipes(context, widget.recipeBook),
+      Pantry(),
+      Schedule(),
+      Shopping(),
+      More()
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFCFCFCF),
       body: _pages[_currentIndex],

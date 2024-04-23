@@ -33,6 +33,17 @@ class RecipeBook {
     }
     return categories;
   }
+
+  List<Recipe> getRecipesWithCategory(String category) {
+    List<Recipe> recipesFound = [];
+    for (Recipe r in _recipes) {
+      if (r.getCategory() == category) {
+        recipesFound.add(r);
+      }
+    }
+    return recipesFound;
+  }
+
 }
 
 class Recipe {
