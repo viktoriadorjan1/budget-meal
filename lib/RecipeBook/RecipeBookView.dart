@@ -49,7 +49,7 @@ List<Widget> createCategoryTiles(context, testRecipeBook) {
 List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, BuildContext context) {
   List<Widget> recipeTiles = [];
   testRecipeBook.getRecipesWithCategory(category).forEach((r) {
-    var recipeTile = MyListTile(r.getRecipeName());
+    var recipeTile = MyListTile(title: r.getRecipeName());
     recipeTiles.add(recipeTile);
   });
   recipeTiles.add(ElevatedButton(onPressed: () {

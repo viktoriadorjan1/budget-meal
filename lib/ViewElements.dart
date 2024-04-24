@@ -1,9 +1,7 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'RecipeBook/RecipeBookModel.dart';
+import 'package:flutter/widgets.dart';
 
 double getScreenWidth() {
   FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
@@ -36,17 +34,71 @@ Widget TitleBar(String title) {
   );
 }
 
-Widget MyListTile(String title) {
-  return Container(
-      width: getScreenWidth() * 0.8,
-      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 20),
-      decoration: BoxDecoration(
+class MyListTile extends StatefulWidget {
+  const MyListTile({required this.title, super.key});
+  final String title;
+
+  @override
+  State<MyListTile> createState() => _MyListTileState();
+}
+
+class _MyListTileState extends State<MyListTile> {
+  int? selectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: getScreenWidth() * 0.8,
+        height: getScreenHeight() * 0.08,
+        decoration: BoxDecoration(
           color: const Color(0xFFF3F9F6),
           border: Border.all(color: const Color(0xFF26BDC6), width: 3),
-          borderRadius: const BorderRadius.all(Radius.circular(15))
-      ),
-      child: Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
-  );
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+        ),
+        //color: const Color(0xFFF3F9F6),
+        padding: const EdgeInsets.all(15),
+        child: PopupMenuButton<int>(
+            initialValue: null,
+            color: const Color(0xFFF3F9F6),
+            onSelected: (int item) {
+              setState(() {
+                selectedItem = item;
+              });
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(
+                value: 0,
+                child: Row (
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Delete"),
+                      Icon(Icons.delete)
+                    ]
+                ),
+              ),
+              const PopupMenuItem(
+                  value: 1,
+                  child: Row (
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Edit"),
+                        Icon(Icons.edit)
+                      ]
+                  ),
+              ),
+            ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.title,
+                  style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const Icon(Icons.more_horiz, color: Color(0xFF26BDC6)),
+              ],)
+          //Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
+        ));
+  }
 }
 
 Widget AddButton(String title) {

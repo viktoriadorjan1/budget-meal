@@ -17,9 +17,9 @@ class _NewRecipePageState extends State<NewRecipePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text("New recipe")),
         backgroundColor: const Color(0xFFCFCFCF),
-        body: Column(
+        body: ListView(
             children: <Widget> [
               Container(height: 50),
               NewRecipeForm(recipeBook: widget.recipeBook),
