@@ -1,7 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 double getScreenWidth() {
   FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
@@ -55,49 +53,16 @@ class _MyListTileState extends State<MyListTile> {
           border: Border.all(color: const Color(0xFF26BDC6), width: 3),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
         ),
-        //color: const Color(0xFFF3F9F6),
         padding: const EdgeInsets.all(15),
-        child: PopupMenuButton<int>(
-            initialValue: null,
-            color: const Color(0xFFF3F9F6),
-            onSelected: (int item) {
-              setState(() {
-                selectedItem = item;
-              });
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(
-                value: 0,
-                child: Row (
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Delete"),
-                      Icon(Icons.delete)
-                    ]
-                ),
-              ),
-              const PopupMenuItem(
-                  value: 1,
-                  child: Row (
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Edit"),
-                        Icon(Icons.edit)
-                      ]
-                  ),
-              ),
-            ],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.title,
-                  style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const Icon(Icons.more_horiz, color: Color(0xFF26BDC6)),
-              ],)
-          //Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
-        ));
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Icon(Icons.more_horiz, color: Color(0xFF26BDC6)),
+          ],));
   }
 }
 

@@ -23,6 +23,10 @@ class RecipeBook {
     _recipes.add(newRecipe);
   }
 
+  void removeRecipe(Recipe recipe) {
+    _recipes.remove(recipe);
+  }
+
   List<String> getCategories() {
     List<String> categories = [];
     for (Recipe r in _recipes) {
@@ -60,7 +64,7 @@ class Recipe {
     _portions = portions;
     _ingredients = ingredients;
     _isFreezable = isFreezable;
-    _category = category!;
+    _category = category;
   }
 
   List<Ingredient> getIngredients() {

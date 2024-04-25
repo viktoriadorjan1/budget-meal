@@ -1,3 +1,4 @@
+import 'package:budget_meal/main.dart';
 import 'package:flutter/material.dart';
 import '../ViewElements.dart';
 import 'NewRecipeView.dart';
@@ -46,10 +47,106 @@ List<Widget> createCategoryTiles(context, testRecipeBook) {
   }
 }
 
+/*class createRecipeTiles extends StatefulWidget {
+  const createRecipeTiles({super.key, required this.testRecipeBook, required this.category});
+  final RecipeBook testRecipeBook;
+  final String category;
+
+  @override
+  State<createRecipeTiles> createState() => _createRecipeTilesState();
+}
+
+class _createRecipeTilesState extends State<createRecipeTiles> {
+  int? selectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> recipeTiles = [];
+    widget.testRecipeBook.getRecipesWithCategory(widget.category).forEach((r) {
+      var recipeTile = PopupMenuButton<int>(
+          initialValue: null,
+          color: const Color(0xFFF3F9F6),
+          onSelected: (int item) {
+            selectedItem = item;
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              onTap: () {
+                widget.testRecipeBook.removeRecipe(r);
+                setState() {}
+              },
+              value: 0,
+              child: const Row (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Delete"),
+                    Icon(Icons.delete)
+                  ]
+              ),
+            ),
+            const PopupMenuItem(
+              value: 1,
+              child: Row (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Edit"),
+                    Icon(Icons.edit)
+                  ]
+              ),
+            ),
+          ],
+          child: MyListTile(title: r.getRecipeName())
+        //Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
+      );
+      recipeTiles.add(recipeTile);
+    });
+    recipeTiles.add(ElevatedButton(onPressed: () {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: widget.testRecipeBook,)));
+    },
+      child: const Text("Add a recipe"),
+    ));
+    return recipeTiles.first;
+  }
+}*/
+
 List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, BuildContext context) {
   List<Widget> recipeTiles = [];
   testRecipeBook.getRecipesWithCategory(category).forEach((r) {
-    var recipeTile = MyListTile(title: r.getRecipeName());
+    var recipeTile = PopupMenuButton<int>(
+        initialValue: null,
+        color: const Color(0xFFF3F9F6),
+        itemBuilder: (BuildContext context) => [
+          PopupMenuItem(
+            onTap: () {
+              testRecipeBook.removeRecipe(r);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => MyHomePage(recipeBook: testRecipeBook)));
+            },
+            value: 0,
+            child: const Row (
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Delete"),
+                  Icon(Icons.delete)
+                ]
+            ),
+          ),
+          const PopupMenuItem(
+            value: 1,
+            child: Row (
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Edit"),
+                  Icon(Icons.edit)
+                ]
+            ),
+          ),
+        ],
+        child: MyListTile(title: r.getRecipeName())
+      //Text(title, style: const TextStyle(color: Color(0xFF26BDC6), fontWeight: FontWeight.bold, fontSize: 18))
+    );
     recipeTiles.add(recipeTile);
   });
   recipeTiles.add(ElevatedButton(onPressed: () {
