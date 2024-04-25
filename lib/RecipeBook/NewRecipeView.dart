@@ -116,8 +116,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     setState(() {});
                     if (_ingredientKey.currentState!.validate()) {
                       if (editIngredientTile != null) {
-                        var ing = IngredientTile(ingredientName, ingredientAmount, ingredientUnit);
-                        listOfInactiveIngredientTiles.add(ing);
+                        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
+                        ingredients.add(i);
                       }
                       _ingredientKey.currentState?.reset();
                       editIngredientTile = EditIngredientTile();
@@ -151,7 +151,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     String? selectedIngredient;
     var selectedUnit = units.first;
     return Container(
-      width: getScreenWidth() * 0.9,
+      width: getScreenWidth(),
       padding: const EdgeInsets.all(5),
       margin: const EdgeInsets.all(5),
       color: const Color(0xFFF3F9F6),
@@ -208,7 +208,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               onChanged: (value) => {selectedIngredient = value},
             ),
           ),
-          const Icon(Icons.delete)
+          IconButton(
+            onPressed: () {
+              editIngredientTile = null;
+              setState(() {});
+            },
+            icon: const Icon(Icons.delete)
+          ),
         ],),
     );
   }
@@ -313,8 +319,7 @@ class _InsertIngredientsState extends State<InsertIngredients> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
-        inactiveIngredientTilesList(),
+      children: _inactiveIngredientTilesList() + <Widget>[
         editIngredientTile(),
       ]
     );
@@ -336,6 +341,33 @@ class _InsertIngredientsState extends State<InsertIngredients> {
     );
   }
 
+  List<Widget> _inactiveIngredientTilesList() {
+    List<Widget> tiles = [];
+    for (var i in widget.ingredients) {
+      var inactiveIngredientTile = Container(
+          width: getScreenWidth() * 0.8,
+          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
+          color: const Color(0xFFF3F9F6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IngredientTile(i.getIngredientName(), i.getQuantity().toString(), i.getUnit()),
+          IconButton(
+              onPressed: () {
+                widget.ingredients.remove(i);
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete)
+          ),
+        ],
+      )
+      );
+      tiles.add(inactiveIngredientTile);
+    }
+    return tiles;
+  }
+
   Widget inactiveIngredientTilesList() {
     return SizedBox(
         height: 150,
@@ -345,20 +377,14 @@ class _InsertIngredientsState extends State<InsertIngredients> {
         )
     );
   }
-}
 
-Widget IngredientTile(String name, String quantity, String unit) {
-  return Container(
-    width: getScreenWidth() * 0.9,
-    padding: const EdgeInsets.all(5),
-    margin: const EdgeInsets.all(5),
-    color: const Color(0xFFF3F9F6),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text(name),
-        Text("$quantity $unit"),
-        const Icon(Icons.delete)
-      ],),
-  );
+  Widget IngredientTile(String name, String quantity, String unit) {
+    return Row(
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(name),
+          Text("$quantity $unit"),
+        ],
+    );
+  }
 }

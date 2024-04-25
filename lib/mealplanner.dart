@@ -20,7 +20,9 @@ class MealPlanner {
     List<String> ingredients = [];
     for (Recipe recipe in recipeBook.getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
-        ingredients.add(ingredient.getIngredientName());
+        if (!ingredients.contains(ingredient.getIngredientName())) {
+          ingredients.add(ingredient.getIngredientName());
+        }
       }
     }
 
@@ -42,13 +44,8 @@ class MealPlanner {
         }
       },
       "needs": {
-        //for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(): {}
-        "cereal": {
-          "cereal_flakes": 300,
-          "milk": 300
-        },
-        "sandwich": {
-          "bread": 200
+        for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(normalised: true): {
+          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()
         }
       }
     };
