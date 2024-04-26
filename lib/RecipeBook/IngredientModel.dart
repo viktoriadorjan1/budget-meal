@@ -1,7 +1,7 @@
 class Ingredient {
   String _storeName = "";
   String _ingredientName = "";
-  String _category = "Uncategorised";
+  String _category = "other";
   int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
@@ -44,20 +44,20 @@ class Ingredient {
     return _totalPrice;
   }
 
+  String getCategory() {
+    return _category;
+  }
+
   void buy() {
     //_perUnitPrice = 0;
     _totalPrice = 0;
-  }
-
-  String getCategory() {
-    return _category;
   }
 }
 
 class IngredientBuilder {
   String _storeName = "";
   String _ingredientName = "";
-  String _category = "Uncategorised";
+  String _category = "other";
   int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
