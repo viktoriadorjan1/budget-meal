@@ -20,25 +20,28 @@ class _NewRecipePageState extends State<NewRecipePage> {
   @override
   Widget build(BuildContext context) {
     if (widget.recipe == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("New recipe")),
+      return PopScope(
+        canPop: false,
+        child: Scaffold(
+        appBar: AppBar(title: const Text("New recipe"), automaticallyImplyLeading: false,),
         backgroundColor: const Color(0xFFCFCFCF),
         body: ListView(
             children: <Widget> [
               Container(height: 50),
               NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry,),
             ]),
-      );
+      ),);
     }
-    return Scaffold(
-      appBar: AppBar(title: const Text("Edit recipe")),
+    return PopScope(
+        canPop: false, child: Scaffold(
+      appBar: AppBar(title: const Text("Edit recipe"), automaticallyImplyLeading: false,),
       backgroundColor: const Color(0xFFCFCFCF),
       body: ListView(
           children: <Widget> [
             Container(height: 50),
             NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry,),
           ]),
-    );
+    ));
   }
 }
 
@@ -128,14 +131,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {});
-                    if (_ingredientKey.currentState!.validate()) {
+                    if (editIngredientTile == null) {
+                      _ingredientKey.currentState?.reset();
+                      editIngredientTile = EditIngredientTile();
+                    }
+                    /*if (_ingredientKey.currentState!.validate()) {
                       if (editIngredientTile != null) {
                         Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
                         ingredients.add(i);
                       }
                       _ingredientKey.currentState?.reset();
                       editIngredientTile = EditIngredientTile();
-                    }
+                    }*/
                   },
                   child: const Text("Add ingredient"),
                 ),
@@ -144,7 +151,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (_key.currentState!.validate()) {
+              if (_key.currentState!.validate() && editIngredientTile == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Saving..."))
                 );
@@ -181,67 +188,86 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
       padding: const EdgeInsets.all(5),
       margin: const EdgeInsets.all(5),
       color: const Color(0xFFF3F9F6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
         children: [
-          SizedBox(
-            width: 118,
-            height: 80,
-            child: DropdownButtonFormField(
-              value: selectedIngredient,
-              validator: (name) {
-                if (name == null) return "Required *";
-                ingredientName = name;
-                return null;
-              },
-              hint: const Text("Select..."),
-              items: existingIngredients.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => {selectedIngredient = value},
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            height: 80,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              validator: (quantity) {
-                if (quantity == null || quantity.isEmpty || int.parse(quantity) == 0) return "Required *";
-                ingredientAmount = quantity;
-                return null;
-              },
-            ),
-          ),
-          SizedBox(
-            width: 100,
-            height: 80,
-            child: DropdownButtonFormField(
-              validator: (unit) {
-                ingredientUnit = unit!;
-                return null;
-              },
-              value: selectedUnit,
-              items: units.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => {selectedIngredient = value},
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                width: 118,
+                height: 80,
+                child: DropdownButtonFormField(
+                  value: selectedIngredient,
+                  validator: (name) {
+                    if (name == null) return "Required *";
+                    ingredientName = name;
+                    return null;
+                  },
+                  hint: const Text("Select..."),
+                  items: existingIngredients.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) => {selectedIngredient = value},
+                ),
+              ),
+              SizedBox(
+                width: 60,
+                height: 80,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  validator: (quantity) {
+                    if (quantity == null || quantity.isEmpty || int.parse(quantity) == 0) return "Required *";
+                    ingredientAmount = quantity;
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 100,
+                height: 80,
+                child: DropdownButtonFormField(
+                  validator: (unit) {
+                    ingredientUnit = unit!;
+                    return null;
+                  },
+                  value: selectedUnit,
+                  items: units.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) => {selectedIngredient = value},
+                ),
+              ),
+              IconButton(
+                  onPressed: () {
+                    editIngredientTile = null;
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.delete)
+              ),
+            ],
           ),
           IconButton(
-            onPressed: () {
-              editIngredientTile = null;
-              setState(() {});
-            },
-            icon: const Icon(Icons.delete)
+              onPressed: () {
+                setState(() {});
+                if (_ingredientKey.currentState!.validate()) {
+                  if (editIngredientTile != null) {
+                    Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
+                    ingredients.add(i);
+                  }
+                  _ingredientKey.currentState?.reset();
+                  editIngredientTile = null; //EditIngredientTile();
+                }
+              },
+              icon: const Icon(Icons.coronavirus)
           ),
-        ],),
+        ],
+      )
     );
   }
 }

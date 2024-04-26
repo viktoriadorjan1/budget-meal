@@ -1,3 +1,4 @@
+import 'package:budget_meal/RecipeBook/IngredientModel.dart';
 import 'package:flutter/material.dart';
 
 import 'Pantry/PantryModel.dart';
@@ -11,6 +12,11 @@ import 'Mealplan/MealplanView.dart';
 void main() {
   RecipeBook recipeBook = RecipeBook();
   Pantry pantry = Pantry();
+
+  // TODO: Remove test pantry
+  Ingredient i = IngredientBuilder().withIngredientName("carrot").withCategory("vegetables").withAmount(500, 'g').build();
+  pantry.putInPantry(i);
+
   runApp(MyApp(recipeBook: recipeBook, pantry: pantry,));
 }
 
@@ -50,7 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
       More()
     ];
 
-    return Scaffold(
+    return PopScope(
+        canPop: false,
+    child: Scaffold(
       backgroundColor: const Color(0xFFCFCFCF),
       body: _pages[_currentIndex],
     bottomNavigationBar: BottomNavigationBar(
@@ -68,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onTap: (index) => setState(() {
         _currentIndex = index;
       }),
-    ));
+    )));
   }
 }
 
