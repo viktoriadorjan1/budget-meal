@@ -6,7 +6,8 @@ import 'RecipeBookModel.dart';
 
 class NewRecipePage extends StatefulWidget {
   final RecipeBook recipeBook;
-  const NewRecipePage({required this.recipeBook, super.key});
+  final Recipe? recipe;
+  const NewRecipePage({required this.recipeBook, this.recipe, super.key});
 
   @override
   State<NewRecipePage> createState() => _NewRecipePageState();
@@ -16,21 +17,33 @@ class _NewRecipePageState extends State<NewRecipePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("New recipe")),
+    if (widget.recipe == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("New recipe")),
         backgroundColor: const Color(0xFFCFCFCF),
         body: ListView(
             children: <Widget> [
               Container(height: 50),
               NewRecipeForm(recipeBook: widget.recipeBook),
             ]),
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(title: const Text("Edit recipe")),
+      backgroundColor: const Color(0xFFCFCFCF),
+      body: ListView(
+          children: <Widget> [
+            Container(height: 50),
+            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe),
+          ]),
     );
   }
 }
 
 class NewRecipeForm extends StatefulWidget {
   final RecipeBook recipeBook;
-  const NewRecipeForm({required this.recipeBook, super.key});
+  final Recipe? recipe;
+  const NewRecipeForm({required this.recipeBook, this.recipe, super.key});
 
   @override
   State<NewRecipeForm> createState() => _NewRecipeFormState();
@@ -51,27 +64,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   String ingredientAmount = "";
   String ingredientUnit = "";
 
-  // TODO: replace with pre-defined ingredients
-  List<Ingredient> ingredientOptions = [];
-
-  Ingredient milk = IngredientBuilder().withIngredientName("milk").withAmount(300, 'ml').build();
-  Ingredient cerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
-  Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').build();
-
   List listOfInactiveIngredientTiles = [];
   Widget? editIngredientTile;
 
   @override
   Widget build(BuildContext context) {
-    ingredientOptions.add(milk);
-    ingredientOptions.add(cerealFlakes);
-    ingredientOptions.add(bread);
-
+    if (widget.recipe != null) {
+      recipeName = widget.recipe!.getRecipeName();
+      category = widget.recipe!.getCategory();
+      portionSize = widget.recipe!.getPortionSize();
+      ingredients = widget.recipe!.getIngredients();
+    }
     return Form(
       key: _key,
       child: Column(
         children: [
         TextFormField(
+          initialValue: recipeName,
           decoration: const InputDecoration(
             labelText: "Recipe name *"
           ),
@@ -82,6 +91,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
           },
         ),
           TextFormField(
+            initialValue: category,
             decoration: const InputDecoration(
               labelText: "Category",
             ),
@@ -95,6 +105,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             },
           ),
           TextFormField(
+            initialValue: portionSize.toString(),
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
                 labelText: "Portion size *",
@@ -134,6 +145,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Saving..."))
                 );
+                // delete old recipe from recipe book, if exists
+                Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false);
+                widget.recipeBook.removeRecipe(oldRecipe);
+                // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, portionSize, ingredients, false, category);
                 widget.recipeBook.addRecipe(newRecipe);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook)));

@@ -69,9 +69,15 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Build
                 ]
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => NewRecipePage(recipeBook: testRecipeBook, recipe: r)));
+            },
             value: 1,
-            child: Row (
+            child: const Row (
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Edit"),

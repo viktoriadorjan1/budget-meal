@@ -83,4 +83,8 @@ class Recipe {
     return _category;
   }
 
+  int getPortionSize() {
+    return _portions;
+  }
+
 }
