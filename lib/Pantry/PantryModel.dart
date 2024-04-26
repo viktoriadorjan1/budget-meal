@@ -47,4 +47,14 @@ class Pantry {
   List<Ingredient> getPantryItems() {
     return _ingredients;
   }
+
+  List<Ingredient> getItemsWithCategory(String category) {
+    List<Ingredient> ingredientsFound = [];
+    for (Ingredient i in ingredientsFound) {
+      if (i.getCategory() == category) {
+        ingredientsFound.add(i);
+      }
+    }
+    return ingredientsFound;
+  }
 }
