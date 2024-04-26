@@ -1,6 +1,7 @@
 class Ingredient {
   String _storeName = "";
   String _ingredientName = "";
+  String _category = "Uncategorised";
   int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
@@ -12,6 +13,7 @@ class Ingredient {
   Ingredient(IngredientBuilder builder) {
     _storeName = builder._storeName;
     _ingredientName = builder._ingredientName;
+    _category = builder._category;
     _quantity = builder._quantity;
     _unit = builder._unit;
     _nutritionalInfo = builder._nutritionalInfo;
@@ -38,10 +40,6 @@ class Ingredient {
     _quantity = newQuantity;
   }
 
-  //int getPerUnitPrice() {
-  //  return _perUnitPrice;
-  //}
-
   double getTotalPrice() {
     return _totalPrice;
   }
@@ -50,11 +48,16 @@ class Ingredient {
     //_perUnitPrice = 0;
     _totalPrice = 0;
   }
+
+  String getCategory() {
+    return _category;
+  }
 }
 
 class IngredientBuilder {
   String _storeName = "";
   String _ingredientName = "";
+  String _category = "Uncategorised";
   int _quantity = 0;
   String _unit = "";
   NutritionalInformation _nutritionalInfo = NutritionalInformation();
@@ -78,6 +81,11 @@ class IngredientBuilder {
 
   IngredientBuilder withIngredientName(String ingredientName) {
     _ingredientName = ingredientName;
+    return this;
+  }
+
+  IngredientBuilder withCategory(String category) {
+    _category = category;
     return this;
   }
 
