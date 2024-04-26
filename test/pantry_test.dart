@@ -185,4 +185,36 @@ void main() {
     assert (pantryItems[1] == egg);
   });
 
+  test('getCategory returns other for undefined category', () {
+    Ingredient milk = IngredientBuilder().withIngredientName("milk").build();
+    assert (milk.getCategory() == "other");
+  });
+
+  test('getCategory returns correct category for defined category', () {
+    Ingredient milk = IngredientBuilder().withIngredientName("milk").withCategory("dairy").build();
+    assert (milk.getCategory() == "dairy");
+  });
+
+  test('getItemsWithCategory returns empty list for empty category', () {
+    Pantry pantry = Pantry();
+    assert (pantry.getItemsWithCategory("vegetables").isEmpty);
+
+    pantry.putInPantry(mushroom);
+    assert (pantry.getItemsWithCategory("vegetables").isEmpty);
+  });
+
+  test('getItemsWithCategory returns correct list for category', () {
+    Pantry pantry = Pantry();
+
+    pantry.putInPantry(mushroom);
+    assert (pantry.getItemsWithCategory("other").isNotEmpty);
+    assert (pantry.getItemsWithCategory("other").first.getIngredientName() == "mushroom");
+
+    Ingredient milk = IngredientBuilder().withIngredientName("milk").withCategory("dairy").build();
+    pantry.putInPantry(milk);
+
+    assert (pantry.getItemsWithCategory("dairy").isNotEmpty);
+    assert (pantry.getItemsWithCategory("dairy").first.getIngredientName() == "milk");
+  });
+
 }
