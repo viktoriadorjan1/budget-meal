@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Pantry/PantryModel.dart';
 import '../ViewElements.dart';
 import '../main.dart';
 import 'IngredientModel.dart';
@@ -6,8 +7,9 @@ import 'RecipeBookModel.dart';
 
 class NewRecipePage extends StatefulWidget {
   final RecipeBook recipeBook;
+  final Pantry pantry;
   final Recipe? recipe;
-  const NewRecipePage({required this.recipeBook, this.recipe, super.key});
+  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry});
 
   @override
   State<NewRecipePage> createState() => _NewRecipePageState();
@@ -24,7 +26,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
         body: ListView(
             children: <Widget> [
               Container(height: 50),
-              NewRecipeForm(recipeBook: widget.recipeBook),
+              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry,),
             ]),
       );
     }
@@ -34,7 +36,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
       body: ListView(
           children: <Widget> [
             Container(height: 50),
-            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe),
+            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry,),
           ]),
     );
   }
@@ -42,8 +44,9 @@ class _NewRecipePageState extends State<NewRecipePage> {
 
 class NewRecipeForm extends StatefulWidget {
   final RecipeBook recipeBook;
+  final Pantry pantry;
   final Recipe? recipe;
-  const NewRecipeForm({required this.recipeBook, this.recipe, super.key});
+  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry});
 
   @override
   State<NewRecipeForm> createState() => _NewRecipeFormState();
@@ -151,7 +154,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, portionSize, ingredients, false, category);
                 widget.recipeBook.addRecipe(newRecipe);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook)));
+                //Navigator.pop(context, widget.recipeBook);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry,)));
               }
             },
             child: const Text("OK")
@@ -162,6 +166,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   Widget EditIngredientTile() {
     List<String> units = ['grams', 'milliliters', 'pieces'];
+    List<String> existingIngredients = ['milk', 'bread', 'cereal flakes'];
+    /*Map<String, String> categoryMap = {
+      'milk' : 'dairy',
+      'bread' : 'bakery',
+      "cupboard" : "cereal flakes"
+    };*/
+
 
     String? selectedIngredient;
     var selectedUnit = units.first;
@@ -184,7 +195,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 return null;
               },
               hint: const Text("Select..."),
-              items: ['milk', 'bread', 'cereal flakes'].map<DropdownMenuItem<String>>((String value) {
+              items: existingIngredients.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -235,89 +246,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   }
 }
 
-/*class EditIngredientTile extends StatefulWidget {
-  String ingredientName = "";
-  String ingredientAmount = "";
-  String ingredientUnit = "";
-
-  EditIngredientTile({super.key});
-
-  @override
-  State<EditIngredientTile> createState() => _EditIngredientState();
-}*/
-
-/*class _EditIngredientState extends State<EditIngredientTile>{
-  @override
-  Widget build(BuildContext context) {
-    List<String> units = ['grams', 'milliliters', 'pieces'];
-
-    String? selectedIngredient;
-    var selectedUnit = units.first;
-
-    return Container(
-      width: getScreenWidth() * 0.9,
-      padding: const EdgeInsets.all(5),
-      margin: const EdgeInsets.all(5),
-      color: const Color(0xFFF3F9F6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          SizedBox(
-            width: 118,
-            height: 80,
-            child: DropdownButtonFormField(
-              value: selectedIngredient,
-              validator: (name) {
-                if (name == null) return "Required *";
-                widget.ingredientName = name;
-                return null;
-              },
-              hint: const Text("Select..."),
-              items: ['milk', 'bread', 'cereal flakes'].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => {selectedIngredient = value},
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            height: 80,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              validator: (quantity) {
-                if (quantity == null || quantity.isEmpty || int.parse(quantity) == 0) return "Required *";
-                widget.ingredientAmount = quantity;
-                return null;
-              },
-            ),
-          ),
-          SizedBox(
-            width: 100,
-            height: 80,
-            child: DropdownButtonFormField(
-              validator: (unit) {
-                widget.ingredientUnit = unit!;
-                return null;
-              },
-              value: selectedUnit,
-              items: units.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => {selectedIngredient = value},
-            ),
-          ),
-          const Icon(Icons.delete)
-        ],),
-    );
-  }
-}*/
-
 class InsertIngredients extends StatefulWidget {
   final List<Ingredient> ingredients;
   final List<dynamic> listOfInactiveIngredientTiles;
@@ -339,15 +267,6 @@ class _InsertIngredientsState extends State<InsertIngredients> {
       ]
     );
   }
-
-  /*List<Widget> createIngredientTiles(List<Ingredient> ingredients) {
-    List<Widget> ingredientTiles = [];
-    for (Ingredient i in ingredients) {
-      var ingredientTile = IngredientTile(i);
-      ingredientTiles.add(ingredientTile);
-    }
-    return ingredientTiles;
-  }*/
 
   Widget editIngredientTile() {
     return SizedBox(
@@ -395,7 +314,6 @@ class _InsertIngredientsState extends State<InsertIngredients> {
 
   Widget IngredientTile(String name, String quantity, String unit) {
     return Row(
-        //mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(name),
           Text("$quantity $unit"),

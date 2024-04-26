@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'Pantry/PantryModel.dart';
 import 'RecipeBook/RecipeBookModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
@@ -9,25 +10,28 @@ import 'Mealplan/MealplanView.dart';
 
 void main() {
   RecipeBook recipeBook = RecipeBook();
-  runApp(MyApp(recipeBook: recipeBook));
+  Pantry pantry = Pantry();
+  runApp(MyApp(recipeBook: recipeBook, pantry: pantry,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({required this.recipeBook, super.key});
+  const MyApp({required this.recipeBook, super.key, required this.pantry});
   final RecipeBook recipeBook;
+  final Pantry pantry;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(recipeBook: recipeBook),
+      home: MyHomePage(recipeBook: recipeBook, pantry: pantry,),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.recipeBook, super.key});
+  const MyHomePage({required this.recipeBook, super.key, required this.pantry});
   final RecipeBook recipeBook;
+  final Pantry pantry;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -39,8 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final List _pages = [
-      Recipes(context, widget.recipeBook),
-      Pantry(),
+      RecipeBookView(recipeBook: widget.recipeBook, pantry: widget.pantry,),
+      PantryView(widget.pantry),
       Schedule(widget.recipeBook),
       Shopping(),
       More()

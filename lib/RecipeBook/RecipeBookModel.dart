@@ -47,7 +47,6 @@ class RecipeBook {
     }
     return recipesFound;
   }
-
 }
 
 class Recipe {
