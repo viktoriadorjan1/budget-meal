@@ -50,7 +50,7 @@ class Pantry {
 
   List<Ingredient> getItemsWithCategory(String category) {
     List<Ingredient> ingredientsFound = [];
-    for (Ingredient i in ingredientsFound) {
+    for (Ingredient i in _ingredients) {
       if (i.getCategory() == category) {
         ingredientsFound.add(i);
       }
