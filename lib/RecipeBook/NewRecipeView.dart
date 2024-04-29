@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import '../Pantry/PantryModel.dart';
 import '../ViewElements.dart';
 import '../main.dart';
@@ -61,7 +62,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   // New recipe properties
   String recipeName = "";
-  String category = "";
+  List<dynamic> categories = [];
   String portionSize = "";
   List<Ingredient> ingredients = [];
 
@@ -77,7 +78,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Widget build(BuildContext context) {
     if (widget.recipe != null) {
       recipeName = widget.recipe!.getRecipeName();
-      category = widget.recipe!.getCategory();
+      categories = widget.recipe!.getCategories();
       portionSize = widget.recipe!.getPortionSize().toString();
       ingredients = widget.recipe!.getIngredients();
     }
@@ -96,16 +97,19 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             return null;
           },
         ),
-          TextFormField(
-            initialValue: category,
-            decoration: const InputDecoration(
-              labelText: "Category",
-            ),
-            validator: (c) {
-              if (c == null || c.isEmpty) {
-                category = "Uncategorised";
+          MultiSelectChipField(
+            items: [
+              MultiSelectItem<String>("breakfast", "breakfast"),
+              MultiSelectItem<String>("lunch", "lunch"),
+            ],
+            initialValue: categories,
+            title: const Text("Meal type * (e.g. breakfast)"),
+            onTap: (values) {},
+            validator: (cats) {
+              if (cats == null || cats.isEmpty) {
+                return "Please select at least one type";
               } else {
-                category = c;
+                categories = cats;
               }
               return null;
             },
@@ -148,10 +152,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     const SnackBar(content: Text("Saving..."))
                 );
                 // delete old recipe from recipe book, if exists
-                Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false);
+                Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false, []);
                 widget.recipeBook.removeRecipe(oldRecipe);
                 // add new recipe to recipe book
-                Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, category);
+                Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
                 widget.recipeBook.addRecipe(newRecipe);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry,)));
               }

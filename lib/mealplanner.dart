@@ -11,9 +11,9 @@ class MealPlanner {
   // a recipebook (all recipes owned by user),
   // and a webshop (all ingredients needed for the given recipes)
   //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
-  String createMealPlan(RecipeBook recipeBook) {
+  String createMealPlan(Pantry pantry, RecipeBook recipeBook) {
     // TODO: replace testPantry with real pantry
-    Pantry pantry = generateTestPantry();
+    //Pantry pantry = generateTestPantry();
     // TODO: replace testRecipeBook with real recipeBook
     //RecipeBook recipeBook = generateTestRecipeBook();
 
@@ -27,6 +27,9 @@ class MealPlanner {
     }
 
     Map<String, dynamic> generateJson() => {
+      "meal": {
+        for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
+      },
       "ingredient": ingredients,
       "recipe": recipeBook.getRecipeNames(normalised: true),
       "pantry_item": {
@@ -104,7 +107,7 @@ class MealPlanner {
     ceIngredients.add(milk);
     ceIngredients.add(cerealFlakes);
 
-    Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, false);
+    Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, false, ["breakfast"]);
 
     // sandwich recipe
     Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(200, 'g').build();
@@ -112,7 +115,7 @@ class MealPlanner {
     List<Ingredient> saIngredients = [];
     saIngredients.add(bread);
 
-    Recipe sandwichRecipe = Recipe("sandwich", 1, saIngredients, false);
+    Recipe sandwichRecipe = Recipe("sandwich", 1, saIngredients, false, ["breakfast", "lunch"]);
 
     testRecipeBook.addRecipe(cerealRecipe);
     testRecipeBook.addRecipe(sandwichRecipe);

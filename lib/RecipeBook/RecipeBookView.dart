@@ -67,7 +67,10 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
         itemBuilder: (BuildContext context) => [
           PopupMenuItem(
             onTap: () {
-              testRecipeBook.removeRecipe(r);
+              r.removeFromCategory(category);
+              if (r.getCategories().isEmpty) {
+                testRecipeBook.removeRecipe(r);
+              }
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

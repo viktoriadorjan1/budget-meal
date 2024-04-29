@@ -13,10 +13,6 @@ void main() {
   RecipeBook recipeBook = RecipeBook();
   Pantry pantry = Pantry();
 
-  // TODO: Remove test pantry
-  Ingredient i = IngredientBuilder().withIngredientName("carrot").withCategory("vegetables").withAmount(500, 'g').build();
-  pantry.putInPantry(i);
-
   runApp(MyApp(recipeBook: recipeBook, pantry: pantry,));
 }
 
@@ -51,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final List _pages = [
       RecipeBookView(recipeBook: widget.recipeBook, pantry: widget.pantry,),
       PantryView(widget.pantry),
-      Schedule(widget.recipeBook),
+      Schedule(widget.pantry, widget.recipeBook),
       Shopping(),
       More()
     ];

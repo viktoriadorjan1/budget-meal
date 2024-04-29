@@ -45,8 +45,6 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
   String ingredientAmount = "";
   String ingredientUnit = "";
 
-  //GlobalKey<FormState> pantryItemKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     List<Widget> tiles = [];
@@ -262,7 +260,7 @@ class _InsertEditPantryItemTileState extends State<InsertEditPantryItemTile>{
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[editPantryItemTile()] //inactivePantryItemTiles(widget.category) + <Widget>[editPantryItemTile()]
+      children: <Widget>[editPantryItemTile()]
     );
   }
 

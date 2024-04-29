@@ -1,7 +1,7 @@
 import 'IngredientModel.dart';
 
 class RecipeBook {
-  List<Recipe> _recipes = [];
+  final List<Recipe> _recipes = [];
 
   List<Recipe> getRecipes() {
     return _recipes;
@@ -30,9 +30,10 @@ class RecipeBook {
   List<String> getCategories() {
     List<String> categories = [];
     for (Recipe r in _recipes) {
-      String c = r.getCategory();
-      if (!categories.contains(c)) {
-        categories.add(c);
+      for (String c in r.getCategories()) {
+        if (!categories.contains(c)) {
+          categories.add(c);
+        }
       }
     }
     return categories;
@@ -41,7 +42,7 @@ class RecipeBook {
   List<Recipe> getRecipesWithCategory(String category) {
     List<Recipe> recipesFound = [];
     for (Recipe r in _recipes) {
-      if (r.getCategory() == category) {
+      if (r.getCategories().contains(category)) {
         recipesFound.add(r);
       }
     }
@@ -54,16 +55,16 @@ class Recipe {
   int _portions = 0;
   List<Ingredient> _ingredients = [];
   bool _isFreezable = false;
-  String _category = "Uncategorised";
+  List<dynamic> _categories = [];
   double _totalPrice = 0;
   NutritionalInformation _totalNutritionalInfo = NutritionalInformation();
 
-  Recipe(String recipeName, int portions, List<Ingredient> ingredients, bool isFreezable, [String category = "Uncategorised"]) {
+  Recipe(String recipeName, int portions, List<Ingredient> ingredients, bool isFreezable, List<dynamic> categories) {
     _recipeName = recipeName;
     _portions = portions;
     _ingredients = ingredients;
     _isFreezable = isFreezable;
-    _category = category;
+    _categories = categories;
   }
 
   List<Ingredient> getIngredients() {
@@ -78,12 +79,16 @@ class Recipe {
     }
   }
 
-  String getCategory() {
-    return _category;
+  List<dynamic> getCategories() {
+    return _categories;
   }
 
   int getPortionSize() {
     return _portions;
+  }
+
+  void removeFromCategory(String category) {
+    _categories.remove(category);
   }
 
 }
