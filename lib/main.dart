@@ -1,23 +1,25 @@
-import 'package:budget_meal/RecipeBook/IngredientModel.dart';
 import 'package:flutter/material.dart';
 
 import 'Pantry/PantryModel.dart';
 import 'RecipeBook/RecipeBookModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
+import 'RecipeBook/WishList.dart';
 import 'WebStore/ShoppingList.dart';
 import 'Settings/SettingsView.dart';
 import 'Mealplan/MealplanView.dart';
 
-void main() {
+Future<void> main() async {
   RecipeBook recipeBook = RecipeBook();
   Pantry pantry = Pantry();
+  final List<String> existingIngredients = await WishList.getAllExistingIngredientNames();
 
-  runApp(MyApp(recipeBook: recipeBook, pantry: pantry,));
+  runApp(MyApp(recipeBook: recipeBook, pantry: pantry, existingIngredients: existingIngredients));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({required this.recipeBook, super.key, required this.pantry});
+  final List<String> existingIngredients;
+  const MyApp({required this.recipeBook, super.key, required this.pantry, required this.existingIngredients});
   final RecipeBook recipeBook;
   final Pantry pantry;
 
@@ -25,13 +27,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(recipeBook: recipeBook, pantry: pantry,),
+      home: MyHomePage(recipeBook: recipeBook, pantry: pantry, existingIngredients: existingIngredients,),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.recipeBook, super.key, required this.pantry});
+  final List<String> existingIngredients;
+  const MyHomePage({required this.recipeBook, super.key, required this.pantry, required this.existingIngredients});
   final RecipeBook recipeBook;
   final Pantry pantry;
 
@@ -45,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final List _pages = [
-      RecipeBookView(recipeBook: widget.recipeBook, pantry: widget.pantry,),
+      RecipeBookView(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients,),
       PantryView(widget.pantry),
       Schedule(widget.pantry, widget.recipeBook),
       Shopping(),

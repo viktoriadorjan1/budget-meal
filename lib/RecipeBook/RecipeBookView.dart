@@ -8,7 +8,8 @@ import 'RecipeBookModel.dart';
 class RecipeBookView extends StatefulWidget {
   final RecipeBook recipeBook;
   final Pantry pantry;
-  const RecipeBookView({super.key, required this.recipeBook, required this.pantry});
+  final List<String> existingIngredients;
+  const RecipeBookView({super.key, required this.recipeBook, required this.pantry, required this.existingIngredients});
 
   @override
   State<RecipeBookView> createState() => _RecipeBookViewState();
@@ -26,7 +27,7 @@ class _RecipeBookViewState extends State<RecipeBookView> {
           Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(8),
-                children: createCategoryTiles(context, widget.recipeBook, widget.pantry),
+                children: createCategoryTiles(context, widget.recipeBook, widget.pantry, widget.existingIngredients),
               )
           ),
         ],
@@ -35,12 +36,12 @@ class _RecipeBookViewState extends State<RecipeBookView> {
   }
 }
 
-List<Widget> createCategoryTiles(context, testRecipeBook, pantry) {
+List<Widget> createCategoryTiles(context, testRecipeBook, pantry, existingIngredients) {
   
   if (testRecipeBook.getCategories().isEmpty) {
     List<Widget> list = <Widget>[];
     list.add(ElevatedButton(onPressed: () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry,)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
     },
       child: const Text("Add a recipe"),
     ));
@@ -50,7 +51,7 @@ List<Widget> createCategoryTiles(context, testRecipeBook, pantry) {
     testRecipeBook.getCategories().forEach((c) {
       var categoryTile = ExpansionTile(
         title: Text(c),
-        children: createRecipeTiles(testRecipeBook, c, pantry, context)
+        children: createRecipeTiles(testRecipeBook, c, pantry, existingIngredients, context)
       );
       tiles.add(categoryTile);
     });
@@ -58,7 +59,7 @@ List<Widget> createCategoryTiles(context, testRecipeBook, pantry) {
   }
 }
 
-List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantry pantry, BuildContext context) {
+List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantry pantry, List<String> existingIngredients, BuildContext context) {
   List<Widget> recipeTiles = [];
   testRecipeBook.getRecipesWithCategory(category).forEach((r) {
     var recipeTile = PopupMenuButton<int>(
@@ -74,7 +75,7 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => MyHomePage(recipeBook: testRecipeBook, pantry: pantry,)));
+                      builder: (BuildContext context) => MyHomePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
             },
             value: 0,
             child: const Row (
@@ -90,7 +91,7 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => NewRecipePage(recipeBook: testRecipeBook, recipe: r, pantry: pantry,)));
+                      builder: (BuildContext context) => NewRecipePage(recipeBook: testRecipeBook, recipe: r, pantry: pantry, existingIngredients: existingIngredients,)));
             },
             value: 1,
             child: const Row (
@@ -108,7 +109,7 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
     recipeTiles.add(recipeTile);
   });
   recipeTiles.add(ElevatedButton(onPressed: () {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
   },
     child: const Text("Add a recipe"),
   ));

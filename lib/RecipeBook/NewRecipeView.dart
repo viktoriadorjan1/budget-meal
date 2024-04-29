@@ -10,7 +10,8 @@ class NewRecipePage extends StatefulWidget {
   final RecipeBook recipeBook;
   final Pantry pantry;
   final Recipe? recipe;
-  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry});
+  final List<String> existingIngredients;
+  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients});
 
   @override
   State<NewRecipePage> createState() => _NewRecipePageState();
@@ -29,7 +30,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
         body: ListView(
             children: <Widget> [
               Container(height: 50),
-              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry,),
+              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients,),
             ]),
       ),);
     }
@@ -40,7 +41,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
       body: ListView(
           children: <Widget> [
             Container(height: 50),
-            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry,),
+            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry, existingIngredients: widget.existingIngredients),
           ]),
     ));
   }
@@ -50,7 +51,8 @@ class NewRecipeForm extends StatefulWidget {
   final RecipeBook recipeBook;
   final Pantry pantry;
   final Recipe? recipe;
-  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry});
+  final List<String> existingIngredients;
+  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients});
 
   @override
   State<NewRecipeForm> createState() => _NewRecipeFormState();
@@ -133,11 +135,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 const Text("Ingredients:"),
                 InsertIngredients(ingredients, editIngredientTile, listOfInactiveIngredientTiles),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {});
                     if (editIngredientTile == null) {
                       _ingredientKey.currentState?.reset();
-                      editIngredientTile = EditIngredientTile();
+                      editIngredientTile = EditIngredientTile(widget.existingIngredients);
                     }
                   },
                   child: const Text("Add ingredient"),
@@ -157,7 +159,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
                 widget.recipeBook.addRecipe(newRecipe);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients,)));
               }
             },
             child: const Text("OK")
@@ -166,9 +168,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     ));
   }
 
-  Widget EditIngredientTile() {
+  Widget EditIngredientTile(existingIngredients) {
     List<String> units = ['grams', 'milliliters', 'pieces'];
-    List<String> existingIngredients = ['milk', 'bread', 'cereal flakes'];
     /*Map<String, String> categoryMap = {
       'milk' : 'dairy',
       'bread' : 'bakery',
