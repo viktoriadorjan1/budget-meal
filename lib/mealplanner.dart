@@ -20,8 +20,8 @@ class MealPlanner {
     List<String> ingredients = [];
     for (Recipe recipe in recipeBook.getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
-        if (!ingredients.contains(ingredient.getIngredientName())) {
-          ingredients.add(ingredient.getIngredientName());
+        if (!ingredients.contains(ingredient.getIngredientName(normalised: true))) {
+          ingredients.add(ingredient.getIngredientName(normalised: true));
         }
       }
     }
