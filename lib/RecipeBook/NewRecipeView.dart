@@ -62,7 +62,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   // New recipe properties
   String recipeName = "";
   String category = "";
-  int portionSize = 0;
+  String portionSize = "";
   List<Ingredient> ingredients = [];
 
   // Inserted ingredient properties
@@ -78,7 +78,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     if (widget.recipe != null) {
       recipeName = widget.recipe!.getRecipeName();
       category = widget.recipe!.getCategory();
-      portionSize = widget.recipe!.getPortionSize();
+      portionSize = widget.recipe!.getPortionSize().toString();
       ingredients = widget.recipe!.getIngredients();
     }
     return Form(
@@ -117,8 +117,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 labelText: "Portion size *",
             ),
             validator: (size) {
-              if (size == null || size.isEmpty) return "Please enter how many portions this recipe makes";
-              portionSize = int.parse(size);
+              if (size == null || size.isEmpty || size == "0") return "Please enter how many portions this recipe makes";
+              portionSize = size;
               return null;
             },
           ),
@@ -151,7 +151,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false);
                 widget.recipeBook.removeRecipe(oldRecipe);
                 // add new recipe to recipe book
-                Recipe newRecipe = Recipe(recipeName, portionSize, ingredients, false, category);
+                Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, category);
                 widget.recipeBook.addRecipe(newRecipe);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry,)));
               }
