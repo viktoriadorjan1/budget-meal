@@ -135,14 +135,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       _ingredientKey.currentState?.reset();
                       editIngredientTile = EditIngredientTile();
                     }
-                    /*if (_ingredientKey.currentState!.validate()) {
-                      if (editIngredientTile != null) {
-                        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
-                        ingredients.add(i);
-                      }
-                      _ingredientKey.currentState?.reset();
-                      editIngredientTile = EditIngredientTile();
-                    }*/
                   },
                   child: const Text("Add ingredient"),
                 ),
@@ -161,7 +153,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, portionSize, ingredients, false, category);
                 widget.recipeBook.addRecipe(newRecipe);
-                //Navigator.pop(context, widget.recipeBook);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry,)));
               }
             },
@@ -326,16 +317,6 @@ class _InsertIngredientsState extends State<InsertIngredients> {
       tiles.add(inactiveIngredientTile);
     }
     return tiles;
-  }
-
-  Widget inactiveIngredientTilesList() {
-    return SizedBox(
-        height: 150,
-        child: ListView.builder(
-            itemCount: widget.listOfInactiveIngredientTiles.length,
-            itemBuilder: (_, index) => widget.listOfInactiveIngredientTiles[index]
-        )
-    );
   }
 
   Widget IngredientTile(String name, String quantity, String unit) {
