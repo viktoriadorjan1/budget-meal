@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'IngredientCatalog/IngredientCatalogModel.dart';
 import 'Pantry/PantryModel.dart';
 import 'RecipeBook/RecipeBookModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
-import 'RecipeBook/WishList.dart';
 import 'WebStore/ShoppingList.dart';
 import 'Settings/SettingsView.dart';
 import 'Mealplan/MealplanView.dart';
@@ -12,8 +12,11 @@ import 'Mealplan/MealplanView.dart';
 Future<void> main() async {
   RecipeBook recipeBook = RecipeBook();
   Pantry pantry = Pantry();
-  final List<String> existingIngredients = await WishList.getAllExistingIngredientNames();
+  IngredientCatalog ingredientCatalog = IngredientCatalog();
+  await ingredientCatalog.create();
+  List<String> existingIngredients = ingredientCatalog.getAllIngredientNames();
 
+  print("Ready");
   runApp(MyApp(recipeBook: recipeBook, pantry: pantry, existingIngredients: existingIngredients));
 }
 

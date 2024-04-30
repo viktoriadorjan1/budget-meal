@@ -8,14 +8,9 @@ import 'RecipeBook/RecipeBookModel.dart';
 
 class MealPlanner {
   // given a pantry (all ingredients owned by user),
-  // a recipebook (all recipes owned by user),
-  // and a webshop (all ingredients needed for the given recipes)
-  //String createMealPlan(Pantry pantry, RecipeBook recipeBook, WebShop webShop) {
+  // and a recipebook (all recipes owned by user),
+  // create a meal plan.
   String createMealPlan(Pantry pantry, RecipeBook recipeBook) {
-    // TODO: replace testPantry with real pantry
-    //Pantry pantry = generateTestPantry();
-    // TODO: replace testRecipeBook with real recipeBook
-    //RecipeBook recipeBook = generateTestRecipeBook();
 
     List<String> ingredients = [];
     for (Recipe recipe in recipeBook.getRecipes()) {
@@ -58,21 +53,12 @@ class MealPlanner {
     return finalJson;
 
     // TODO: mealplan (as a file)
-    
-    // TODO: replace testPantry with real pantry
-    //pantry = generateTestPantry();
-    // TODO: replace testRecipeBook with real recipeBook
-    //recipeBook = generateTestRecipeBook();
-
-    //WebShop webShop = WebShop();
-    //webShop.fillWebShop(recipeBook);
 
     // TODO: shopping list
     //List<IngredientBuilder> shopping_list = [];
 
     //var process = await Process.start('cat', []);
     //print(process.stdout);
-    //process.stdin.writeln('clingo --version');
 
   }
 
