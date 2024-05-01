@@ -21,18 +21,7 @@ Future<void> main() async {
   UserData userData = UserData();
   bool userExists = await userData.init();
 
-  if (userExists) {
-    print("User exists!!!");
-    //pantry = userData.getPantry();
-    //recipeBook = userData.getRecipeBook();
-  }
-  else {
-    print("New user!!!");
-    //userData.setPantry = Pantry();
-    //recipeBook = RecipeBook();
-  }
-
-  print("Ready");
+  print("Finished loading. Running app...");
   runApp(MyApp(recipeBook: userData.getRecipeBook(), pantry: userData.getPantry(), existingIngredients: existingIngredients, userExists: userExists, userData: userData));
 }
 

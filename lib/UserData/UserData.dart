@@ -40,19 +40,13 @@ class UserData {
       // user exists!
       final userDataFileContents = await userDataFile.readAsString();
       parseUserDataFromJson(userDataFileContents);
-      //print(userDataFileContents);
-      print("data is: $_userName, $_age, $_weight, ...");
       userExists = true;
     } else {
       // new user
-      print("File does not exists");
+      print("File does not exists = user does not exists");
       userExists = false;
     }
 
-    //await userDataFile.delete();
-    fileExists = await userDataFile.exists();
-
-    print("Right now file existance is $fileExists");
     return userExists;
   }
 
@@ -121,15 +115,6 @@ class UserData {
     final path = directory.path;
     final userDataFile = File('$path/userData.txt');
 
-    bool fileExists = await userDataFile.exists();
-
-    if(fileExists) {
-      print("user just modified their data");
-    }
-    else {
-      print("completely new user");
-    }
-
     await userDataFile.writeAsString('''
               {
                 "userName": "$_userName",
@@ -157,7 +142,7 @@ class UserData {
                 "recipeBook": ${_recipeBook.toJson()}
               }
           ''');
-    print("File writing is done");
+    print("Saved.");
   }
 
   //"pantry": {
