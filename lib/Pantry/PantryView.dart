@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../RecipeBook/IngredientModel.dart';
+import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 import 'PantryModel.dart';
 
-Widget PantryView(Pantry pantry) {
+Widget PantryView(Pantry pantry, UserData userData) {
   return Center(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -14,7 +15,7 @@ Widget PantryView(Pantry pantry) {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                CreateCategoryTiles(pantry: pantry)
+                CreateCategoryTiles(pantry: pantry, userData: userData,)
               ],
             )
         ),
@@ -25,8 +26,9 @@ Widget PantryView(Pantry pantry) {
 
 class CreateCategoryTiles extends StatefulWidget {
   final Pantry pantry;
+  final UserData userData;
 
-  const CreateCategoryTiles({super.key, required this.pantry});
+  const CreateCategoryTiles({super.key, required this.pantry, required this.userData});
 
   @override
   State<CreateCategoryTiles> createState() => _CreateCategoryTilesState();
@@ -56,7 +58,7 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
           initiallyExpanded: true,
             title: Text(c),
             children: inactivePantryItemTiles(c) + <Widget>[
-              GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, pantry: widget.pantry, refresh: refreshCategoryTiles)
+              GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, pantry: widget.pantry, refresh: refreshCategoryTiles, userData: widget.userData,)
             ],
       );
       tiles.add(categoryTile);
@@ -83,8 +85,9 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
             children: [
               IngredientTile(i.getIngredientName(), i.getQuantity().toString(), i.getUnit()),
               IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     widget.pantry.removeFromPantry(i);
+                    await widget.userData.saveUserData();
                     setState(() {});
                   },
                   icon: const Icon(Icons.delete)
@@ -114,8 +117,9 @@ class GenerateEditIngredientForm extends StatefulWidget {
   String ingredientName;
   String ingredientAmount;
   String ingredientUnit;
+  final UserData userData;
   final void Function() refresh;
-  GenerateEditIngredientForm({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.pantry, required this.refresh});
+  GenerateEditIngredientForm({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.pantry, required this.refresh, required this.userData});
 
   @override
   State<GenerateEditIngredientForm> createState() => _GenerateEditIngredientFormState();
@@ -222,7 +226,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                 icon: const Icon(Icons.delete)
             ),
             IconButton(
-                onPressed: () {
+                onPressed: () async {
                   setState(() {});
                   if (pantryItemKey.currentState!.validate()) {
                     Ingredient i = IngredientBuilder().withIngredientName(
@@ -234,6 +238,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                     widget.pantry.putInPantry(i);
                     pantryItemKey.currentState?.reset();
                     widget.cat[widget.category] = null;
+                    await widget.userData.saveUserData();
                     widget.refresh();
                   }
                 },

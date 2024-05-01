@@ -1,6 +1,7 @@
 import 'package:budget_meal/main.dart';
 import 'package:flutter/material.dart';
 import '../Pantry/PantryModel.dart';
+import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 import 'NewRecipeView.dart';
 import 'RecipeBookModel.dart';
@@ -9,7 +10,8 @@ class RecipeBookView extends StatefulWidget {
   final RecipeBook recipeBook;
   final Pantry pantry;
   final List<String> existingIngredients;
-  const RecipeBookView({super.key, required this.recipeBook, required this.pantry, required this.existingIngredients});
+  final UserData userData;
+  const RecipeBookView({super.key, required this.recipeBook, required this.pantry, required this.existingIngredients, required this.userData});
 
   @override
   State<RecipeBookView> createState() => _RecipeBookViewState();
@@ -27,7 +29,7 @@ class _RecipeBookViewState extends State<RecipeBookView> {
           Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(8),
-                children: createCategoryTiles(context, widget.recipeBook, widget.pantry, widget.existingIngredients),
+                children: createCategoryTiles(context, widget.recipeBook, widget.pantry, widget.existingIngredients, widget.userData),
               )
           ),
         ],
@@ -36,12 +38,12 @@ class _RecipeBookViewState extends State<RecipeBookView> {
   }
 }
 
-List<Widget> createCategoryTiles(context, testRecipeBook, pantry, existingIngredients) {
+List<Widget> createCategoryTiles(context, testRecipeBook, pantry, existingIngredients, userData) {
   
   if (testRecipeBook.getCategories().isEmpty) {
     List<Widget> list = <Widget>[];
     list.add(ElevatedButton(onPressed: () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients, userData: userData,)));
     },
       child: const Text("Add a recipe"),
     ));
@@ -51,7 +53,7 @@ List<Widget> createCategoryTiles(context, testRecipeBook, pantry, existingIngred
     testRecipeBook.getCategories().forEach((c) {
       var categoryTile = ExpansionTile(
         title: Text(c),
-        children: createRecipeTiles(testRecipeBook, c, pantry, existingIngredients, context)
+        children: createRecipeTiles(testRecipeBook, c, pantry, existingIngredients, context, userData)
       );
       tiles.add(categoryTile);
     });
@@ -59,7 +61,7 @@ List<Widget> createCategoryTiles(context, testRecipeBook, pantry, existingIngred
   }
 }
 
-List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantry pantry, List<String> existingIngredients, BuildContext context) {
+List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantry pantry, List<String> existingIngredients, BuildContext context, UserData userData) {
   List<Widget> recipeTiles = [];
   testRecipeBook.getRecipesWithCategory(category).forEach((r) {
     var recipeTile = PopupMenuButton<int>(
@@ -67,15 +69,16 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
         color: const Color(0xFFF3F9F6),
         itemBuilder: (BuildContext context) => [
           PopupMenuItem(
-            onTap: () {
+            onTap: () async {
               r.removeFromCategory(category);
               if (r.getCategories().isEmpty) {
                 testRecipeBook.removeRecipe(r);
               }
+              await userData.saveUserData();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => MyHomePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
+                      builder: (BuildContext context) => MyHomePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients, userData: userData,)));
             },
             value: 0,
             child: const Row (
@@ -91,7 +94,7 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => NewRecipePage(recipeBook: testRecipeBook, recipe: r, pantry: pantry, existingIngredients: existingIngredients,)));
+                      builder: (BuildContext context) => NewRecipePage(recipeBook: testRecipeBook, recipe: r, pantry: pantry, existingIngredients: existingIngredients, userData: userData,)));
             },
             value: 1,
             child: const Row (
@@ -109,7 +112,7 @@ List<Widget> createRecipeTiles(RecipeBook testRecipeBook, String category, Pantr
     recipeTiles.add(recipeTile);
   });
   recipeTiles.add(ElevatedButton(onPressed: () {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipePage(recipeBook: testRecipeBook, pantry: pantry, existingIngredients: existingIngredients, userData: userData,)));
   },
     child: const Text("Add a recipe"),
   ));

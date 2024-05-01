@@ -1,4 +1,5 @@
 import '../RecipeBook/IngredientModel.dart';
+import 'dart:convert';
 
 class Pantry {
   final List<Ingredient> _ingredients = [];
@@ -56,5 +57,13 @@ class Pantry {
       }
     }
     return ingredientsFound;
+  }
+
+  String toJson() {
+    Map<String, dynamic> generateJson() => {
+      for (Ingredient i in _ingredients) i.getIngredientName(normalised: true) : i.getQuantity()
+    };
+
+    return jsonEncode(generateJson());
   }
 }

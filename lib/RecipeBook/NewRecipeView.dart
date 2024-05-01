@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import '../Pantry/PantryModel.dart';
+import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 import '../main.dart';
 import 'IngredientModel.dart';
@@ -11,7 +12,8 @@ class NewRecipePage extends StatefulWidget {
   final Pantry pantry;
   final Recipe? recipe;
   final List<String> existingIngredients;
-  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients});
+  final UserData userData;
+  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients, required this.userData});
 
   @override
   State<NewRecipePage> createState() => _NewRecipePageState();
@@ -30,7 +32,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
         body: ListView(
             children: <Widget> [
               Container(height: 50),
-              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients,),
+              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData,),
             ]),
       ),);
     }
@@ -41,7 +43,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
       body: ListView(
           children: <Widget> [
             Container(height: 50),
-            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry, existingIngredients: widget.existingIngredients),
+            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData,),
           ]),
     ));
   }
@@ -52,7 +54,9 @@ class NewRecipeForm extends StatefulWidget {
   final Pantry pantry;
   final Recipe? recipe;
   final List<String> existingIngredients;
-  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients});
+  final UserData userData;
+
+  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients, required this.userData});
 
   @override
   State<NewRecipeForm> createState() => _NewRecipeFormState();
@@ -148,7 +152,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             )
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_key.currentState!.validate() && editIngredientTile == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Saving..."))
@@ -159,7 +163,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
                 widget.recipeBook.addRecipe(newRecipe);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients,)));
+                await widget.userData.saveUserData();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData, )));
               }
             },
             child: const Text("OK")

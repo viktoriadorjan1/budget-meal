@@ -16,10 +16,10 @@ class IngredientCatalog {
 
   Future<List<Ingredient>> buildIngredientCatalog() async {
 
-    const serverUrl = "https://budget-meal.onrender.com/";
+    const serverUrl = "https://budget-meal.onrender.com/ingredients";
     const localUrl = "http://146.169.165.75:9674/ingredients"; //"http://10.0.2.2:5000";
 
-    var response = await http.post(Uri.parse(localUrl),
+    var response = await http.post(Uri.parse(serverUrl),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({})
     );
