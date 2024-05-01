@@ -5,15 +5,16 @@ import 'package:budget_meal/WebStore/webshop.dart';
 
 import 'Pantry/PantryModel.dart';
 import 'RecipeBook/RecipeBookModel.dart';
+import 'UserData/UserData.dart';
 
 class MealPlanner {
   // given a pantry (all ingredients owned by user),
   // and a recipebook (all recipes owned by user),
   // create a meal plan.
-  String createMealPlan(Pantry pantry, RecipeBook recipeBook) {
+  String createMealPlan(UserData userData) {
 
     List<String> ingredients = [];
-    for (Recipe recipe in recipeBook.getRecipes()) {
+    for (Recipe recipe in userData.getRecipeBook().getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
         if (!ingredients.contains(ingredient.getIngredientName(normalised: true))) {
           ingredients.add(ingredient.getIngredientName(normalised: true));
@@ -23,12 +24,12 @@ class MealPlanner {
 
     Map<String, dynamic> generateJson() => {
       "meal": {
-        for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
+        for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
       },
       "ingredient": ingredients,
-      "recipe": recipeBook.getRecipeNames(normalised: true),
+      "recipe": userData.getRecipeBook().getRecipeNames(normalised: true),
       "pantry_item": {
-        for (Ingredient i in pantry.getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
+        for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
       },
       "nutrient_needed": {
         "protein": [50, 80],
@@ -42,7 +43,7 @@ class MealPlanner {
         }
       },
       "needs": {
-        for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(normalised: true): {
+        for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
           for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()
         }
       }

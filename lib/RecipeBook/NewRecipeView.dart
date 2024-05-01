@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import '../Pantry/PantryModel.dart';
 import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 import '../main.dart';
@@ -8,12 +7,10 @@ import 'IngredientModel.dart';
 import 'RecipeBookModel.dart';
 
 class NewRecipePage extends StatefulWidget {
-  final RecipeBook recipeBook;
-  final Pantry pantry;
   final Recipe? recipe;
   final List<String> existingIngredients;
   final UserData userData;
-  const NewRecipePage({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients, required this.userData});
+  const NewRecipePage({this.recipe, super.key, required this.existingIngredients, required this.userData});
 
   @override
   State<NewRecipePage> createState() => _NewRecipePageState();
@@ -32,7 +29,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
         body: ListView(
             children: <Widget> [
               Container(height: 50),
-              NewRecipeForm(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData,),
+              NewRecipeForm(existingIngredients: widget.existingIngredients, userData: widget.userData,),
             ]),
       ),);
     }
@@ -43,20 +40,18 @@ class _NewRecipePageState extends State<NewRecipePage> {
       body: ListView(
           children: <Widget> [
             Container(height: 50),
-            NewRecipeForm(recipeBook: widget.recipeBook, recipe: widget.recipe, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData,),
+            NewRecipeForm(recipe: widget.recipe, existingIngredients: widget.existingIngredients, userData: widget.userData,),
           ]),
     ));
   }
 }
 
 class NewRecipeForm extends StatefulWidget {
-  final RecipeBook recipeBook;
-  final Pantry pantry;
   final Recipe? recipe;
   final List<String> existingIngredients;
   final UserData userData;
 
-  const NewRecipeForm({required this.recipeBook, this.recipe, super.key, required this.pantry, required this.existingIngredients, required this.userData});
+  const NewRecipeForm({this.recipe, super.key, required this.existingIngredients, required this.userData});
 
   @override
   State<NewRecipeForm> createState() => _NewRecipeFormState();
@@ -159,12 +154,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 );
                 // delete old recipe from recipe book, if exists
                 Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false, []);
-                widget.recipeBook.removeRecipe(oldRecipe);
+                widget.userData.getRecipeBook().removeRecipe(oldRecipe);
                 // add new recipe to recipe book
                 Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
-                widget.recipeBook.addRecipe(newRecipe);
+                widget.userData.getRecipeBook().addRecipe(newRecipe);
                 await widget.userData.saveUserData();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData, )));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, )));
               }
             },
             child: const Text("OK")

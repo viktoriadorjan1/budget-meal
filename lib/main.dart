@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'IngredientCatalog/IngredientCatalogModel.dart';
-import 'Pantry/PantryModel.dart';
-import 'RecipeBook/RecipeBookModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
 import 'UserData/UserData.dart';
@@ -22,7 +20,7 @@ Future<void> main() async {
   bool userExists = await userData.init();
 
   print("Finished loading. Running app...");
-  runApp(MyApp(recipeBook: userData.getRecipeBook(), pantry: userData.getPantry(), existingIngredients: existingIngredients, userExists: userExists, userData: userData));
+  runApp(MyApp(existingIngredients: existingIngredients, userExists: userExists, userData: userData));
 }
 
 class MyApp extends StatelessWidget {
@@ -31,9 +29,7 @@ class MyApp extends StatelessWidget {
   final bool userExists;
   final UserData userData;
 
-  const MyApp({required this.recipeBook, super.key, required this.pantry, required this.existingIngredients, required this.userExists, required this.userData, });
-  final RecipeBook recipeBook;
-  final Pantry pantry;
+  const MyApp({required this.existingIngredients, required this.userExists, required this.userData});
 
   // This widget is the root of your application.
   @override
@@ -42,7 +38,7 @@ class MyApp extends StatelessWidget {
     if (userExists) {
       // User exists, carry on with loaded data.
       return MaterialApp(
-        home: MyHomePage(recipeBook: recipeBook, pantry: pantry, existingIngredients: existingIngredients, userData: userData),
+        home: MyHomePage(existingIngredients: existingIngredients, userData: userData),
       );
     }
     else {
@@ -55,11 +51,11 @@ class MyApp extends StatelessWidget {
 }
 
 class SetupPage extends StatefulWidget {
-  UserData userData;
+  final UserData userData;
   final List<String> existingIngredients;
 
 
-  SetupPage(this.userData, {super.key, required this.existingIngredients});
+  const SetupPage(this.userData, {super.key, required this.existingIngredients});
 
   @override
   State<SetupPage> createState() => _SetupPageState();
@@ -144,7 +140,7 @@ class _SetupPageState extends State<SetupPage>{
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text("Saving..."))
                                 );
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(recipeBook: RecipeBook(), pantry: Pantry(), existingIngredients: widget.existingIngredients, userData: widget.userData,)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData,)));
                               }
                             },
                             child: const Text("OK")
@@ -162,9 +158,7 @@ class _SetupPageState extends State<SetupPage>{
 
 class MyHomePage extends StatefulWidget {
   final List<String> existingIngredients;
-  const MyHomePage({required this.recipeBook, super.key, required this.pantry, required this.existingIngredients, required this.userData});
-  final RecipeBook recipeBook;
-  final Pantry pantry;
+  const MyHomePage({super.key, required this.existingIngredients, required this.userData});
   final UserData userData;
 
   @override
@@ -177,9 +171,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final List _pages = [
-      RecipeBookView(recipeBook: widget.recipeBook, pantry: widget.pantry, existingIngredients: widget.existingIngredients, userData: widget.userData,),
-      PantryView(widget.pantry, widget.userData),
-      Schedule(widget.pantry, widget.recipeBook),
+      RecipeBookView(existingIngredients: widget.existingIngredients, userData: widget.userData,),
+      PantryView(widget.userData),
+      Schedule(widget.userData),
       Shopping(),
       More(widget.userData, widget.existingIngredients, context)
     ];
