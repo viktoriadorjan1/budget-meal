@@ -54,7 +54,15 @@ class RecipeBook {
   String toJson() {
     Map<String, dynamic> generateJson() => {
       for (Recipe r in _recipes) r.getRecipeName(normalised: true) : {
-        for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()
+        "categories": r.getCategories(),
+        "portions": r.getPortionSize(),
+        "needed_ingredients": [
+          for (Ingredient i in r.getIngredients()) {
+            "ingredientName": i.getIngredientName(normalised: true),
+            "ingredientQuantity": i.getQuantity(),
+            "ingredientUnit": i.getUnit()
+          }
+        ]
       }
     };
 

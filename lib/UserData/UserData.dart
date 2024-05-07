@@ -92,19 +92,22 @@ class UserData {
     RecipeBook recipeBook = RecipeBook();
 
     for (String recipeName in parsedJson.keys) {
+      print(recipeName);
+      Map<String, dynamic> entry = parsedJson[recipeName];
+      List<dynamic> categories = entry["categories"];
+      int portions = entry["portions"];
       List<Ingredient> ingredients = [];
-      for (MapEntry entry in parsedJson[recipeName].entries) {
-        String ingredientName = entry.key;
-        int ingredientAmount = entry.value;
-        // TODO: implement unit.
-        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientAmount, "g").build();
+      for (Map<String, dynamic> needed_ing in entry["needed_ingredients"]) {
+        print(needed_ing);
+        String ingredientName = needed_ing["ingredientName"];
+        int ingredientQuantity = needed_ing["ingredientQuantity"];
+        String ingredientUnit = needed_ing["ingredientUnit"];
+        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).build();
         ingredients.add(i);
       }
-      // TODO: implement portion size.
-      // TODO: implement freezable.
-      // TODO: implement recipe category.
-      Recipe r = Recipe(recipeName, 1, ingredients, false, ["breakfast"]);
+      Recipe r = Recipe(recipeName, portions, ingredients, false, categories);
       recipeBook.addRecipe(r);
+      // TODO: implement freezable.
     }
     return recipeBook;
   }
@@ -142,6 +145,7 @@ class UserData {
                 "recipeBook": ${_recipeBook.toJson()}
               }
           ''');
+    print(_recipeBook.toJson());
     print("Saved.");
   }
 
