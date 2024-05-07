@@ -52,4 +52,13 @@ class IngredientCatalog {
     return ingredientNames;
   }
 
+  List<Ingredient> getAllIngredients() {
+    print("Fetching ingredients...");
+    List<Ingredient> ingredients = [];
+    for (Ingredient i in _ingredientCatalog) {
+      ingredients.add(i);
+    }
+    return ingredients;
+  }
+
 }

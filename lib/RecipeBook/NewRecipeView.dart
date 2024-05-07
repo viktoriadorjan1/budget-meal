@@ -8,7 +8,7 @@ import 'RecipeBookModel.dart';
 
 class NewRecipePage extends StatefulWidget {
   final Recipe? recipe;
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
   final UserData userData;
   const NewRecipePage({this.recipe, super.key, required this.existingIngredients, required this.userData});
 
@@ -48,7 +48,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
 
 class NewRecipeForm extends StatefulWidget {
   final Recipe? recipe;
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
   final UserData userData;
 
   const NewRecipeForm({this.recipe, super.key, required this.existingIngredients, required this.userData});

@@ -3,7 +3,7 @@ import '../RecipeBook/IngredientModel.dart';
 import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 
-Widget PantryView(UserData userData) {
+Widget PantryView({required List<Ingredient> existingIngredients, required UserData userData}) {
   return Center(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -14,7 +14,7 @@ Widget PantryView(UserData userData) {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                CreateCategoryTiles(userData: userData,)
+                CreateCategoryTiles(userData: userData, existingIngredients: existingIngredients)
               ],
             )
         ),
@@ -25,20 +25,16 @@ Widget PantryView(UserData userData) {
 
 class CreateCategoryTiles extends StatefulWidget {
   final UserData userData;
+  final List<Ingredient> existingIngredients;
 
-  const CreateCategoryTiles({super.key, required this.userData});
+  const CreateCategoryTiles({super.key, required this.userData, required this.existingIngredients});
 
   @override
   State<CreateCategoryTiles> createState() => _CreateCategoryTilesState();
 }
 
 class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
-  List<String> categories = ["vegetables", "other"];
-
-  Map<String, Widget?> cat = {
-    "vegetables" : null,
-    "other" : null
-  };
+  List<String> categories = [];
 
   // Inserted ingredient properties
   String ingredientName = "";
@@ -47,6 +43,17 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
 
   @override
   Widget build(BuildContext context) {
+    // build categories of the ingredients
+    for (Ingredient ingredient in widget.existingIngredients) {
+      String category = ingredient.getCategory();
+      if (!categories.contains(category)) {
+        categories.add(ingredient.getCategory());
+      }
+    }
+    // map all categories to null initially
+    Map<String, Widget?> cat = {
+      for (Ingredient i in widget.existingIngredients) i.getIngredientName() : null
+    };
     List<Widget> tiles = [];
     for (var c in categories) {
       var categoryTile = ExpansionTile(
@@ -56,7 +63,7 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
           initiallyExpanded: true,
             title: Text(c),
             children: inactivePantryItemTiles(c) + <Widget>[
-              GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, refresh: refreshCategoryTiles, userData: widget.userData,)
+              GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, refresh: refreshCategoryTiles, userData: widget.userData, existingIngredients: widget.existingIngredients,)
             ],
       );
       tiles.add(categoryTile);
@@ -115,8 +122,9 @@ class GenerateEditIngredientForm extends StatefulWidget {
   String ingredientAmount;
   String ingredientUnit;
   final UserData userData;
+  final List<Ingredient> existingIngredients;
   final void Function() refresh;
-  GenerateEditIngredientForm({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.refresh, required this.userData});
+  GenerateEditIngredientForm({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.refresh, required this.userData, required this.existingIngredients});
 
   @override
   State<GenerateEditIngredientForm> createState() => _GenerateEditIngredientFormState();
@@ -137,7 +145,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                 setState(() {});
                 if (widget.cat[widget.category] == null) {
                   pantryItemKey.currentState?.reset();
-                  widget.cat[widget.category] = EditIngredientTile();
+                  widget.cat[widget.category] = EditIngredientTile(widget.existingIngredients, widget.category);
                 }
               },
               child: const Text("Add ingredient"),
@@ -147,9 +155,23 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
     );
   }
 
-  Widget EditIngredientTile() {
+  Widget EditIngredientTile(List<Ingredient> existingIngredients, String category) {
     List<String> units = ['grams', 'milliliters', 'pieces'];
-    List<String> existingIngredients = ['milk', 'bread', 'cereal flakes'];
+    List<String> existingIngredientNames = [];
+    existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
+      if (i.getCategory() == category) {
+        return i.getIngredientName();
+      }
+      return "";
+    }));
+
+    existingIngredientNames.removeWhere((String element) => element == "");
+
+    //List<String?> existingIngredientNames = existingIngredients.map((Ingredient i) {
+    //  if (i.getCategory() == category) {
+    //    return i.getIngredientName();
+    //  }
+    //}).toList();
 
     String? selectedIngredient;
     var selectedUnit = units.first;
@@ -174,7 +196,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                     return null;
                   },
                   hint: const Text("Select..."),
-                  items: existingIngredients.map<DropdownMenuItem<String>>((String value) {
+                  items: existingIngredientNames.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),

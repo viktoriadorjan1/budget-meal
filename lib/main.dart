@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'IngredientCatalog/IngredientCatalogModel.dart';
+import 'RecipeBook/IngredientModel.dart';
 import 'RecipeBook/RecipeBookView.dart';
 import 'Pantry/PantryView.dart';
 import 'UserData/UserData.dart';
@@ -12,7 +13,7 @@ import 'Mealplan/MealplanView.dart';
 Future<void> main() async {
   IngredientCatalog ingredientCatalog = IngredientCatalog();
   await ingredientCatalog.create();
-  List<String> existingIngredients = ingredientCatalog.getAllIngredientNames();
+  List<Ingredient> existingIngredients = ingredientCatalog.getAllIngredients();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,7 +25,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
 
   final bool userExists;
   final UserData userData;
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
 
 class SetupPage extends StatefulWidget {
   final UserData userData;
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
 
 
   const SetupPage(this.userData, {super.key, required this.existingIngredients});
@@ -157,7 +158,7 @@ class _SetupPageState extends State<SetupPage>{
 }
 
 class MyHomePage extends StatefulWidget {
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
   const MyHomePage({super.key, required this.existingIngredients, required this.userData});
   final UserData userData;
 
@@ -172,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final List _pages = [
       RecipeBookView(existingIngredients: widget.existingIngredients, userData: widget.userData,),
-      PantryView(widget.userData),
+      PantryView(existingIngredients: widget.existingIngredients, userData: widget.userData),
       Schedule(widget.userData),
       Shopping(),
       More(widget.userData, widget.existingIngredients, context)

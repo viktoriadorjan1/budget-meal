@@ -79,10 +79,11 @@ class UserData {
   Pantry parsePantry(Map<String, dynamic> parsedJson) {
     Pantry pantry = Pantry();
     for (String ingredientName in parsedJson.keys) {
-      int ingredientAmount = parsedJson[ingredientName];
-      // TODO: implement unit.
-      // TODO: implement ingredient category.
-      Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientAmount, "g").withCategory("other").build();
+      Map<String, dynamic> entry = parsedJson[ingredientName];
+      int ingredientQuantity = entry["ingredientQuantity"];
+      String ingredientUnit = entry["ingredientUnit"];
+      String ingredientCategory = entry["ingredientCategory"];
+      Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).withCategory(ingredientCategory).build();
       pantry.putInPantry(i);
     }
     return pantry;

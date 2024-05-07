@@ -2,10 +2,11 @@ import 'package:budget_meal/main.dart';
 import 'package:flutter/material.dart';
 import '../UserData/UserData.dart';
 import '../ViewElements.dart';
+import 'IngredientModel.dart';
 import 'NewRecipeView.dart';
 
 class RecipeBookView extends StatefulWidget {
-  final List<String> existingIngredients;
+  final List<Ingredient> existingIngredients;
   final UserData userData;
   const RecipeBookView({super.key, required this.existingIngredients, required this.userData});
 
@@ -57,7 +58,7 @@ List<Widget> createCategoryTiles(context, existingIngredients, UserData userData
   }
 }
 
-List<Widget> createRecipeTiles(String category, List<String> existingIngredients, BuildContext context, UserData userData) {
+List<Widget> createRecipeTiles(String category, List<Ingredient> existingIngredients, BuildContext context, UserData userData) {
   List<Widget> recipeTiles = [];
   userData.getRecipeBook().getRecipesWithCategory(category).forEach((r) {
     var recipeTile = PopupMenuButton<int>(

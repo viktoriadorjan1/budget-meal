@@ -61,7 +61,11 @@ class Pantry {
 
   String toJson() {
     Map<String, dynamic> generateJson() => {
-      for (Ingredient i in _ingredients) i.getIngredientName(normalised: true) : i.getQuantity()
+      for (Ingredient i in _ingredients) i.getIngredientName() : {
+        "ingredientQuantity": i.getQuantity(),
+        "ingredientUnit": i.getUnit(),
+        "ingredientCategory": i.getCategory()
+      }
     };
 
     return jsonEncode(generateJson());
