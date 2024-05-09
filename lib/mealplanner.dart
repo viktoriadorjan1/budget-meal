@@ -13,11 +13,15 @@ class MealPlanner {
   // create a meal plan.
   String createMealPlan(UserData userData) {
 
-    List<String> ingredients = [];
+    List<String> ingredientNames = [];
+    List<Ingredient> ingredients = [];
     for (Recipe recipe in userData.getRecipeBook().getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
-        if (!ingredients.contains(ingredient.getIngredientName(normalised: true))) {
-          ingredients.add(ingredient.getIngredientName(normalised: true));
+        if (!ingredients.contains(ingredient)) {
+          ingredients.add(ingredient);
+        }
+        if (!ingredientNames.contains(ingredient.getIngredientName(normalised: true))) {
+          ingredientNames.add(ingredient.getIngredientName(normalised: true));
         }
       }
     }
@@ -26,22 +30,25 @@ class MealPlanner {
       "meal": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
       },
-      "ingredient": ingredients,
+      "ingredient": ingredientNames,
       "recipe": userData.getRecipeBook().getRecipeNames(normalised: true),
       "pantry_item": {
+        for (Ingredient i in ingredients) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : 0,
         for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
       },
       "nutrient_needed": {
-        "protein": [50, 80],
+        "protein": [5000, 8000],
         //"fats": [18, 31],
         //"carbs": [34, 156]
       },
-      "has_nutrient": {
-        "cereal": {
-        //for (Recipe r in recipeBook.getRecipes()) r.getRecipeName(): {
-          "protein": 50
+      "ing_has_nutrient": [
+        {
+          "ingName": "milk",
+          "ingAmount": 300,
+          "nutrName": "protein",
+          "nutrAmount": 5000
         }
-      },
+      ],
       "needs": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
           for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()
@@ -53,7 +60,7 @@ class MealPlanner {
     print(finalJson);
     return finalJson;
 
-    // TODO: mealplan (as a file)
+    // TODO: meal plan (as a file)
 
     // TODO: shopping list
     //List<IngredientBuilder> shopping_list = [];

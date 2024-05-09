@@ -102,6 +102,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             items: [
               MultiSelectItem<String>("breakfast", "breakfast"),
               MultiSelectItem<String>("lunch", "lunch"),
+              MultiSelectItem<String>("dinner", "dinner"),
+              MultiSelectItem<String>("dessert", "dessert"),
             ],
             initialValue: categories,
             title: const Text("Meal type * (e.g. breakfast)"),
@@ -168,13 +170,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     ));
   }
 
-  Widget EditIngredientTile(existingIngredients) {
+  Widget EditIngredientTile(List<Ingredient> existingIngredients) {
     List<String> units = ['grams', 'milliliters', 'pieces'];
-    /*Map<String, String> categoryMap = {
-      'milk' : 'dairy',
-      'bread' : 'bakery',
-      "cupboard" : "cereal flakes"
-    };*/
+    List<String> existingIngredientNames = [];
+    existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
+      return i.getIngredientName();
+    }));
 
 
     String? selectedIngredient;
@@ -200,7 +201,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     return null;
                   },
                   hint: const Text("Select..."),
-                  items: existingIngredients.map<DropdownMenuItem<String>>((String value) {
+                  items: existingIngredientNames.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),

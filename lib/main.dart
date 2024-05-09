@@ -174,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final List _pages = [
       RecipeBookView(existingIngredients: widget.existingIngredients, userData: widget.userData,),
       PantryView(existingIngredients: widget.existingIngredients, userData: widget.userData),
-      Schedule(widget.userData),
+      Schedule(userData: widget.userData),
       Shopping(),
       More(widget.userData, widget.existingIngredients, context)
     ];
@@ -202,4 +202,3 @@ class _MyHomePageState extends State<MyHomePage> {
     )));
   }
 }
-
