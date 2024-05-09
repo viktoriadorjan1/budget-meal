@@ -75,6 +75,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   List listOfInactiveIngredientTiles = [];
   Widget? editIngredientTile;
 
+  Color ingColor = Colors.black;
+
   @override
   Widget build(BuildContext context) {
     if (widget.recipe != null) {
@@ -133,7 +135,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             key: _ingredientKey,
             child: Column(
               children: [
-                const Text("Ingredients:"),
+                Text(
+                  "Ingredients: *",
+                  style: TextStyle(color: ingColor)
+                ),
                 InsertIngredients(ingredients, editIngredientTile, listOfInactiveIngredientTiles),
                 ElevatedButton(
                   onPressed: () async {
@@ -150,7 +155,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (_key.currentState!.validate() && editIngredientTile == null) {
+              if (ingredients.isEmpty) {
+                print("EMPTY");
+                setState(() {
+                  ingColor = Colors.red;
+                });
+              }
+              else if (_key.currentState!.validate() && editIngredientTile == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Saving..."))
                 );
