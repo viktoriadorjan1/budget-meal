@@ -12,7 +12,8 @@ import 'Mealplan/MealplanView.dart';
 
 Future<void> main() async {
   IngredientCatalog ingredientCatalog = IngredientCatalog();
-  await ingredientCatalog.create();
+  //await ingredientCatalog.create();
+  ingredientCatalog.create();
   List<Ingredient> existingIngredients = ingredientCatalog.getAllIngredients();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,85 +73,87 @@ class _SetupPageState extends State<SetupPage>{
         child: Scaffold(
             backgroundColor: const Color(0xFFCFCFCF),
             body: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(height: 50),
-                  TitleBar("Before you get started..."),
-                  Form(
-                    key: _key,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          initialValue: "",
-                          decoration: const InputDecoration(
-                              labelText: "Username *"
-                          ),
-                          validator: (n) {
-                            if (n == null || n.isEmpty) return "Please enter a username";
-                            widget.userData.setUsername(n);
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          initialValue: "",
-                          decoration: const InputDecoration(
-                              labelText: "Age *"
-                          ),
-                          validator: (a) {
-                            if (a == null || a.isEmpty) return "Please enter your age";
-                            widget.userData.setAge(int.parse(a));
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          initialValue: "",
-                          decoration: const InputDecoration(
-                              labelText: "Height (cm) *"
-                          ),
-                          validator: (h) {
-                            if (h == null || h.isEmpty) return "Please enter your height in centimeters";
-                            widget.userData.setHeight(int.parse(h));
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          initialValue: "",
-                          decoration: const InputDecoration(
-                              labelText: "Weight (kg) *"
-                          ),
-                          validator: (w) {
-                            if (w == null || w.isEmpty) return "Please enter your weight in kilograms";
-                            widget.userData.setWeight(int.parse(w));
-                            return null;
-                          },
-                        ),
-                        ElevatedButton(
-                            onPressed: () async {
-                              if (_key.currentState!.validate()) {
-                                // TODO: replace with calculation for calories
-                                widget.userData.setSex("male");
-                                widget.userData.setActivityLevel("low");
-                                widget.userData.setDailyCalories(2000);
-
-                                await widget.userData.saveUserData();
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Saving..."))
-                                );
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData,)));
-                              }
+              child: ListView(children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(height: 50),
+                    TitleBar("Before you get started..."),
+                    Form(
+                      key: _key,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            initialValue: "",
+                            decoration: const InputDecoration(
+                                labelText: "Username *"
+                            ),
+                            validator: (n) {
+                              if (n == null || n.isEmpty) return "Please enter a username";
+                              widget.userData.setUsername(n);
+                              return null;
                             },
-                            child: const Text("OK")
-                        ),
-                      ],
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            initialValue: "",
+                            decoration: const InputDecoration(
+                                labelText: "Age *"
+                            ),
+                            validator: (a) {
+                              if (a == null || a.isEmpty) return "Please enter your age";
+                              widget.userData.setAge(int.parse(a));
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            initialValue: "",
+                            decoration: const InputDecoration(
+                                labelText: "Height (cm) *"
+                            ),
+                            validator: (h) {
+                              if (h == null || h.isEmpty) return "Please enter your height in centimeters";
+                              widget.userData.setHeight(int.parse(h));
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            initialValue: "",
+                            decoration: const InputDecoration(
+                                labelText: "Weight (kg) *"
+                            ),
+                            validator: (w) {
+                              if (w == null || w.isEmpty) return "Please enter your weight in kilograms";
+                              widget.userData.setWeight(int.parse(w));
+                              return null;
+                            },
+                          ),
+                          ElevatedButton(
+                              onPressed: () async {
+                                if (_key.currentState!.validate()) {
+                                  // TODO: replace with calculation for calories
+                                  widget.userData.setSex("male");
+                                  widget.userData.setActivityLevel("low");
+                                  widget.userData.setDailyCalories(2000);
+
+                                  await widget.userData.saveUserData();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Saving..."))
+                                  );
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData,)));
+                                }
+                              },
+                              child: const Text("OK")
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],)
             ),
         )
     );

@@ -95,7 +95,7 @@ class Recipe {
     if (normalised == null || !normalised) {
       return _recipeName;
     } else {
-      return _recipeName.replaceAll(' ', '_');
+      return _recipeName.replaceAll(' ', '_').toLowerCase();
     }
   }
 

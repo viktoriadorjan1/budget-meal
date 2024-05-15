@@ -33,7 +33,7 @@ class Ingredient {
 
   String getIngredientName({bool? normalised}) {
     if (normalised == null || !normalised) return _ingredientName;
-    return _ingredientName.replaceAll(' ', '_');
+    return _ingredientName.replaceAll(' ', '_').toLowerCase();
   }
 
   void updateQuantity(int newQuantity) {
