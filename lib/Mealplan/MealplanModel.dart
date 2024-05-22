@@ -1,25 +1,45 @@
-import 'package:http/http.dart' as http;
-import '../UserData/UserData.dart';
-import '../mealplanner.dart';
+enum MealPlanStatus {
+  current,
+  past,
+  upcoming
+}
 
-MealPlanner _mealPlanner = MealPlanner();
+String mealPlanStatusToString(MealPlanStatus status) {
+  switch(status) {
+    case MealPlanStatus.past: return "past";
+    case MealPlanStatus.upcoming: return "upcoming";
+    case MealPlanStatus.current: return "current";
+  }
+}
 
-Future<String> generateMealPlan(UserData userData) async {
-  String results = "";
-  const serverUrl = "https://budget-meal.onrender.com/meal_plan";
-  const localUrl = "http://146.169.170.164:9674/meal_plan"; //"http://10.0.2.2:5000";
+class MealPlan {
+  String? name;
+  final DateTime startDate;
+  final DateTime endDate;
+  final Map<String, dynamic> plan;
+  MealPlanStatus status = MealPlanStatus.past;
+  List<dynamic> _meals;
 
-  var response = await http.post(Uri.parse(serverUrl),
-      headers: {"Content-Type": "application/json"},
-      body: _mealPlanner.createMealPlan(userData)
-  );
+  MealPlan(this.startDate, this.endDate, this.plan, this._meals, {String? name}) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
 
-  print("Code: ${response.statusCode}");
+    if (today.isBefore(startDate)) {
+      status = MealPlanStatus.upcoming;
+    } else if (today.isAfter(endDate)){
+      status = MealPlanStatus.past;
+    } else {
+      status = MealPlanStatus.current;
+    }
 
-  if (response.statusCode == 200) {
-    print("Body: ${response.body}");
-    results = response.body;
+    this.name = "${startDate.toString().split(' ')[0]} - ${endDate.toString().split(' ')[0]}";
   }
 
-  return results;
+  List<dynamic> getMeals() {
+    return _meals;
+  }
+
+  void setMeals(List<dynamic> ms) {
+    _meals = ms;
+  }
 }
