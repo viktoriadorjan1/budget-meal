@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:budget_meal/Mealplan/MealPlanCollectionModel.dart';
 import 'package:budget_meal/Pantry/PantryModel.dart';
 import 'package:budget_meal/RecipeBook/RecipeBookModel.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../Mealplan/MealPlanModel.dart';
 import '../RecipeBook/IngredientModel.dart';
 
 class UserData {
@@ -16,9 +18,11 @@ class UserData {
   String _activityLevel = "";
   int _dailyCalories = 0;
   List<Ingredient> _unwantedIngredients = [];
-  List<Ingredient> _ownIngredients = [];
+  final List<Ingredient> _ownIngredients = [];
   Pantry _pantry = Pantry();
   RecipeBook _recipeBook = RecipeBook();
+  MealPlanCollection _mealPlanCollection = MealPlanCollection();
+  NutritionalInformation? _nutritionalInformation;
 
   UserData();
 
@@ -63,6 +67,8 @@ class UserData {
     _unwantedIngredients = parseUnwantedIngredients(parsedJson["unwantedIngredients"]);
     _pantry = parsePantry(parsedJson["pantry"]);
     _recipeBook = parseRecipeBook(parsedJson["recipeBook"]);
+    _mealPlanCollection = parseMealPlanCollection(parsedJson["mealPlanCollection"]);
+    _nutritionalInformation = parseNutritionalInformation(parsedJson["nutritionalTargets"]);
   }
 
   List<Ingredient> parseUnwantedIngredients(Map<String, dynamic> parsedJson) {
@@ -74,6 +80,68 @@ class UserData {
       }
     }
     return unwantedIngs;
+  }
+
+  NutritionalInformation? parseNutritionalInformation(Map<String, dynamic> parsedJson) {
+    Fats? fats;
+    Saturates? saturates;
+    Carbs? carbs;
+    Sugars? sugars;
+    Protein? protein;
+    Salt? salt;
+
+    NutritionalInformation? nutritionalInformation;
+
+    for (String nutritionName in parsedJson.keys) {
+      print("nutrition name $nutritionName");
+      Map<String, dynamic> entry = parsedJson[nutritionName];
+      int lowerLimit = entry["lower_limit"];
+      int upperLimit = entry["upper_limit"];
+      print("limits are $lowerLimit - $upperLimit");
+      switch (nutritionName) {
+        case "fats":
+          fats = Fats(lowerLimit, upperLimit);
+          break;
+        case "saturates":
+          saturates = Saturates(lowerLimit, upperLimit);
+          break;
+        case "carbs":
+          carbs = Carbs(lowerLimit, upperLimit);
+          break;
+        case "sugars":
+          sugars = Sugars(lowerLimit, upperLimit);
+          break;
+        case "protein":
+          protein = Protein(lowerLimit, upperLimit);
+          break;
+        case "salt":
+          salt = Salt(lowerLimit, upperLimit);
+          break;
+      }
+    }
+
+    if (fats != null && saturates != null && carbs != null && sugars != null && protein != null && salt != null) {
+      nutritionalInformation = NutritionalInformation(fats, saturates, carbs, sugars, protein, salt);
+    }
+
+    print("parsed Nutritional information $nutritionalInformation");
+
+    return nutritionalInformation;
+  }
+
+  MealPlanCollection parseMealPlanCollection(Map<String, dynamic> parsedJson) {
+    MealPlanCollection mealPlanCollection = MealPlanCollection();
+    for (String mealPlanName in parsedJson.keys) {
+      Map<String, dynamic> entry = parsedJson[mealPlanName];
+      DateTime start = DateTime.parse(entry["start"]);
+      DateTime end = DateTime.parse(entry["end"]);
+      List<dynamic> meals = entry["meals"];
+      Map<String, dynamic> plan = entry["plan"];
+      MealPlan mealPlan = MealPlan(start, end, plan, meals, name: mealPlanName);
+      print("Parsed meal plan $mealPlanName with $meals");
+      mealPlanCollection.addMealPlan(mealPlan);
+    }
+    return mealPlanCollection;
   }
 
   Pantry parsePantry(Map<String, dynamic> parsedJson) {
@@ -93,13 +161,11 @@ class UserData {
     RecipeBook recipeBook = RecipeBook();
 
     for (String recipeName in parsedJson.keys) {
-      print(recipeName);
       Map<String, dynamic> entry = parsedJson[recipeName];
       List<dynamic> categories = entry["categories"];
       int portions = entry["portions"];
       List<Ingredient> ingredients = [];
       for (Map<String, dynamic> needed_ing in entry["needed_ingredients"]) {
-        print(needed_ing);
         String ingredientName = needed_ing["ingredientName"];
         int ingredientQuantity = needed_ing["ingredientQuantity"];
         String ingredientUnit = needed_ing["ingredientUnit"];
@@ -143,29 +209,13 @@ class UserData {
                     ]
                 },
                 "pantry": ${_pantry.toJson()},
-                "recipeBook": ${_recipeBook.toJson()}
+                "recipeBook": ${_recipeBook.toJson()},
+                "mealPlanCollection": ${_mealPlanCollection.toJson()},
+                "nutritionalTargets": ${_nutritionalInformation?.toJson()}
               }
           ''');
-    print(_recipeBook.toJson());
     print("Saved.");
   }
-
-  //"pantry": {
-  //                     ${_pantry.toJson()}
-  //                     "milk": 200,
-  //                     "cereal_flakes": 400,
-  //                     "bread": 100
-  //                 },
-
-  //"recipeBook": {
-  //                     "cereal": {
-  //                         "cereal_flakes": 300,
-  //                         "milk": 300
-  //                     },
-  //                     "sandwich": {
-  //                         "bread": 200
-  //                     }
-  //                 }
 
   // GETTERS
 
@@ -205,6 +255,14 @@ class UserData {
     return _recipeBook;
   }
 
+  MealPlanCollection getMealPlanCollection() {
+    return _mealPlanCollection;
+  }
+
+  NutritionalInformation? getNutritionalInformation() {
+    return _nutritionalInformation;
+  }
+
   // SETTERS
 
   void setUsername(String name) {
@@ -233,6 +291,10 @@ class UserData {
 
   void setActivityLevel(String l) {
     _activityLevel = l;
+  }
+
+  void setNutritionalInformation(NutritionalInformation n) {
+    _nutritionalInformation = n;
   }
 
 }

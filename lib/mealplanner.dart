@@ -9,9 +9,9 @@ import 'UserData/UserData.dart';
 
 class MealPlanner {
   // given a pantry (all ingredients owned by user),
-  // and a recipebook (all recipes owned by user),
+  // and a recipe book (all recipes owned by user),
   // create a meal plan.
-  String createMealPlan(UserData userData) {
+  String createMealPlan(UserData userData, List<String> days, List<dynamic> meals) {
 
     List<String> ingredientNames = [];
     List<Ingredient> ingredients = [];
@@ -27,6 +27,8 @@ class MealPlanner {
     }
 
     Map<String, dynamic> generateJson() => {
+      "day": [for (String d in days) d],
+      "meals": [for (String m in meals) m],
       "meal": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
       },
@@ -37,18 +39,23 @@ class MealPlanner {
         for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
       },
       "nutrient_needed": {
-        "protein": [5000, 8000],
-        //"fats": [18, 31],
-        //"carbs": [34, 156]
+        "energy": [userData.getDailyCalories(), userData.getDailyCalories()],
+        "protein": [userData.getNutritionalInformation()!.getProtein().getLowerLimit() * 100, userData.getNutritionalInformation()!.getProtein().getUpperLimit() * 100],
+        "fat": [userData.getNutritionalInformation()!.getFats().getLowerLimit() * 100, userData.getNutritionalInformation()!.getFats().getUpperLimit() * 100],
+        "saturates": [userData.getNutritionalInformation()!.getSaturates().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSaturates().getUpperLimit() * 100],
+        "carbs": [userData.getNutritionalInformation()!.getCarbs().getLowerLimit() * 100, userData.getNutritionalInformation()!.getCarbs().getUpperLimit() * 100],
+        "sugar": [userData.getNutritionalInformation()!.getSugars().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSugars().getUpperLimit() * 100],
+        "salt": [userData.getNutritionalInformation()!.getSalt().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSalt().getUpperLimit() * 100]
       },
-      "ing_has_nutrient": [
+      // this is useful when this specific ingredient is NOT in the web store but is in the pantry and a meal can be scheduled with it
+      /*"ing_has_nutrient": [
         {
           "ingName": "milk",
           "ingAmount": 300,
           "nutrName": "protein",
           "nutrAmount": 5000
         }
-      ],
+      ],*/
       "needs": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
           for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()

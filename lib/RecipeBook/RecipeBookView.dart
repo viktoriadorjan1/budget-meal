@@ -70,12 +70,13 @@ List<Widget> createRecipeTiles(String category, List<Ingredient> existingIngredi
               r.removeFromCategory(category);
               if (r.getCategories().isEmpty) {
                 userData.getRecipeBook().removeRecipe(r);
+
               }
               await userData.saveUserData();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => MyHomePage(existingIngredients: existingIngredients, userData: userData,)));
+                      builder: (BuildContext context) => MyHomePage(existingIngredients: existingIngredients, userData: userData, pageCount: 0)));
             },
             value: 0,
             child: const Row (

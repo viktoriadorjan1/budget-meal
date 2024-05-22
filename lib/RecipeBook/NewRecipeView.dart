@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import '../UserData/UserData.dart';
@@ -172,7 +173,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
                 widget.userData.getRecipeBook().addRecipe(newRecipe);
                 await widget.userData.saveUserData();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, )));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, pageCount: 0)));
               }
             },
             child: const Text("OK")
@@ -182,7 +183,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   }
 
   Widget EditIngredientTile(List<Ingredient> existingIngredients) {
-    List<String> units = ['grams', 'milliliters', 'pieces'];
+    List<String> units = ['grams', 'ml', 'pieces', 'slices', 'whole', 'tbsp', 'tsp', 'block'];
     List<String> existingIngredientNames = [];
     existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
       return i.getIngredientName();
@@ -202,23 +203,33 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               SizedBox(
-                width: 118,
+                width: 140,
                 height: 80,
-                child: DropdownButtonFormField(
-                  value: selectedIngredient,
+                child: DropdownSearch<String>(
+                  popupProps: const PopupProps.menu(
+                    searchDelay: Duration(seconds: 0),
+                    fit: FlexFit.loose,
+                    showSearchBox: true,
+                    searchFieldProps: TextFieldProps(
+                      autofocus: true
+                    ),
+                  ),
+                  selectedItem: selectedIngredient,
                   validator: (name) {
                     if (name == null) return "Required *";
-                    ingredientName = name;
+                    ingredientName = name.toString();
                     return null;
                   },
-                  hint: const Text("Select..."),
-                  items: existingIngredientNames.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Select...",
+                      hintText: "Select...",
+                    ),
+                  ),
+                  items: existingIngredientNames.map<String>((String value) {
+                    return value;
                   }).toList(),
-                  onChanged: (value) => {selectedIngredient = value},
+                  onChanged: (value) => {selectedIngredient = value.toString()},
                 ),
               ),
               SizedBox(
@@ -251,6 +262,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   onChanged: (value) => {selectedIngredient = value},
                 ),
               ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               IconButton(
                   onPressed: () {
                     editIngredientTile = null;
@@ -258,21 +275,21 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   },
                   icon: const Icon(Icons.delete)
               ),
+              IconButton(
+                  onPressed: () {
+                    setState(() {});
+                    if (_ingredientKey.currentState!.validate()) {
+                      if (editIngredientTile != null) {
+                        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
+                        ingredients.add(i);
+                      }
+                      _ingredientKey.currentState?.reset();
+                      editIngredientTile = null; //EditIngredientTile();
+                    }
+                  },
+                  icon: const Icon(Icons.check_circle)
+              ),
             ],
-          ),
-          IconButton(
-              onPressed: () {
-                setState(() {});
-                if (_ingredientKey.currentState!.validate()) {
-                  if (editIngredientTile != null) {
-                    Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
-                    ingredients.add(i);
-                  }
-                  _ingredientKey.currentState?.reset();
-                  editIngredientTile = null; //EditIngredientTile();
-                }
-              },
-              icon: const Icon(Icons.coronavirus)
           ),
         ],
       )

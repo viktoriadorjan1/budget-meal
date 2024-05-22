@@ -8,7 +8,7 @@ import 'UserData/UserData.dart';
 import 'ViewElements.dart';
 import 'WebStore/ShoppingList.dart';
 import 'Settings/SettingsView.dart';
-import 'Mealplan/MealplanView.dart';
+import 'Mealplan/MealplanCollectionView.dart';
 
 Future<void> main() async {
   IngredientCatalog ingredientCatalog = IngredientCatalog();
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
     if (userExists) {
       // User exists, carry on with loaded data.
       return MaterialApp(
-        home: MyHomePage(existingIngredients: existingIngredients, userData: userData),
+        home: MyHomePage(existingIngredients: existingIngredients, userData: userData, pageCount: 2),
       );
     }
     else {
@@ -65,6 +65,9 @@ class SetupPage extends StatefulWidget {
 
 class _SetupPageState extends State<SetupPage>{
   final _key = GlobalKey<FormState>();
+
+  String _sex = "";
+  String _activityLevel = "";
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +96,38 @@ class _SetupPageState extends State<SetupPage>{
                               widget.userData.setUsername(n);
                               return null;
                             },
+                          ),
+                          const Text("Sex *"),
+                          Wrap(
+                            children: [
+                              ChoiceChip(
+                                  label: const Text("Male"),
+                                  selected: _sex == "Male",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _sex = (selected ? "Male" : "");
+                                    });
+                                  },
+                              ),
+                              ChoiceChip(
+                                label: const Text("Female"),
+                                selected: _sex == "Female",
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    _sex = (selected ? "Female" : "");
+                                  });
+                                },
+                              ),
+                              ChoiceChip(
+                                label: const Text("Non-Binary"),
+                                selected: _sex == "Non-Binary",
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    _sex = selected ? "Non-Binary" : "";
+                                  });
+                                },
+                              )
+                            ],
                           ),
                           TextFormField(
                             keyboardType: TextInputType.number,
@@ -130,20 +165,124 @@ class _SetupPageState extends State<SetupPage>{
                               return null;
                             },
                           ),
+                          const Text("Activity level *"),
+                          Wrap(
+                              children: [
+                                ChoiceChip(
+                                  label: const Text("Sedentary (little to no exercise)"),
+                                  selected: _activityLevel == "Sedentary",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _activityLevel = selected ? "Sedentary" : "";
+                                    });
+                                  },
+                                ),
+                                ChoiceChip(
+                                  label: const Text("Lightly active (light exercise 1-3 days a week)"),
+                                  selected: _activityLevel == "Lightly active",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _activityLevel = selected ? "Lightly active" : "";
+                                    });
+                                  },
+                                ),
+                                ChoiceChip(
+                                  label: const Text("Moderately active (light to moderate exercise 4-5 days a week)"),
+                                  selected: _activityLevel == "Moderately active",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _activityLevel = selected ? "Moderately active" : "";
+                                    });
+                                  },
+                                ),
+                                ChoiceChip(
+                                  label: const Text("Active (moderate exercise 6-7 days a week or intense exercise 3-4 days a week)"),
+                                  selected: _activityLevel == "Active",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _activityLevel = selected ? "Active" : "";
+                                    });
+                                  },
+                                ),
+                                ChoiceChip(
+                                  label: const Text("Very active (intense exercise 6-7 days a week, sports training, or physical job)"),
+                                  selected: _activityLevel == "Very active",
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      _activityLevel = selected ? "Very active" : "";
+                                    });
+                                  },
+                                ),
+
+                              ]
+                          ),
                           ElevatedButton(
                               onPressed: () async {
-                                if (_key.currentState!.validate()) {
+                                if (_key.currentState!.validate() && _sex != "" && _activityLevel != "") {
                                   // TODO: replace with calculation for calories
-                                  widget.userData.setSex("male");
-                                  widget.userData.setActivityLevel("low");
-                                  widget.userData.setDailyCalories(2000);
+                                  widget.userData.setSex(_sex);
+                                  widget.userData.setActivityLevel(_activityLevel);
+
+                                  // calculate daily calories
+                                  double calories = 10 * widget.userData.getWeight() + 6.25 * widget.userData.getHeight() - 5 * widget.userData.getAge();
+                                  double femaleCals = calories - 161;
+                                  double maleCals = calories + 5;
+                                  if (_sex == "Female") {
+                                    widget.userData.setDailyCalories(femaleCals.round());
+                                  } else if (_sex == "Male") {
+                                    widget.userData.setDailyCalories(maleCals.round());
+                                  } else {
+                                    widget.userData.setDailyCalories(((femaleCals + maleCals) / 2).round());
+                                  }
+
+                                  // calculate required nutritional information in grams
+                                  // fats: 20-35% of daily calories. 9 calories = 1g fat
+                                  int fatLower = (widget.userData.getDailyCalories() * 0.2 / 9).round();
+                                  int fatUpper = (widget.userData.getDailyCalories() * 0.35 / 9).round();
+
+                                  Fats fats = Fats(fatLower, fatUpper);
+
+                                  int saturatedFat = (widget.userData.getDailyCalories() * 0.1 / 9).round();
+
+                                  Saturates saturates = Saturates(0, saturatedFat);
+
+                                  // carbs: 45-65% of daily calories. 4 calories = 1g carb
+                                  int carbsLower = (widget.userData.getDailyCalories() * 0.45 / 4).round();
+                                  int carbsUpper = (widget.userData.getDailyCalories() * 0.65 / 4).round();
+
+                                  Carbs carbs = Carbs(carbsLower, carbsUpper);
+
+                                  // sugars: 36g for men, 25g for women
+                                  int sugarsLimit = 0;
+                                  if (_sex == "Male") {
+                                    sugarsLimit = 36;
+                                  } else if (_sex == "Female") {
+                                    sugarsLimit = 25;
+                                  } else {
+                                    sugarsLimit = ((36 + 25) / 2).round();
+                                  }
+
+                                  Sugars sugars = Sugars(0, sugarsLimit);
+
+                                  // protein: 10-35% of daily calories. 4 calories = 1g protein
+                                  int proteinLower = (widget.userData.getDailyCalories() * 0.1 / 4).round();
+                                  int proteinUpper = (widget.userData.getDailyCalories() * 0.35 / 4).round();
+
+                                  Protein protein = Protein(proteinLower, proteinUpper);
+
+                                  // salt: 6g
+                                  Salt salt = Salt(0, 6);
+
+                                  NutritionalInformation nutritionTargets = NutritionalInformation(fats, saturates, carbs, sugars, protein, salt);
+
+                                  widget.userData.setNutritionalInformation(nutritionTargets);
 
                                   await widget.userData.saveUserData();
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text("Saving..."))
                                   );
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData,)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, pageCount: 0,)));
                                 }
                               },
                               child: const Text("OK")
@@ -162,7 +301,8 @@ class _SetupPageState extends State<SetupPage>{
 
 class MyHomePage extends StatefulWidget {
   final List<Ingredient> existingIngredients;
-  const MyHomePage({super.key, required this.existingIngredients, required this.userData});
+  int pageCount;
+  MyHomePage({super.key, required this.existingIngredients, required this.userData, required this.pageCount});
   final UserData userData;
 
   @override
@@ -170,14 +310,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final List _pages = [
       RecipeBookView(existingIngredients: widget.existingIngredients, userData: widget.userData,),
       PantryView(existingIngredients: widget.existingIngredients, userData: widget.userData),
-      Schedule(userData: widget.userData),
+      Schedule(existingIngredients: widget.existingIngredients, userData: widget.userData),
       Shopping(),
       More(widget.userData, widget.existingIngredients, context)
     ];
@@ -186,7 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
         canPop: false,
     child: Scaffold(
       backgroundColor: const Color(0xFFCFCFCF),
-      body: _pages[_currentIndex],
+      body: _pages[widget.pageCount],
     bottomNavigationBar: BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       backgroundColor: const Color(0xFF26BDC6),
@@ -197,10 +335,10 @@ class _MyHomePageState extends State<MyHomePage> {
         BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'To buy'),
         BottomNavigationBarItem(icon: Icon(Icons.more_outlined), label: 'More'),
       ],
-      currentIndex: _currentIndex,
+      currentIndex: widget.pageCount,
       selectedItemColor: Colors.white,
       onTap: (index) => setState(() {
-        _currentIndex = index;
+        widget.pageCount = index;
       }),
     )));
   }

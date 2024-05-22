@@ -76,8 +76,6 @@ class Recipe {
   List<Ingredient> _ingredients = [];
   bool _isFreezable = false;
   List<dynamic> _categories = [];
-  double _totalPrice = 0;
-  NutritionalInformation _totalNutritionalInfo = NutritionalInformation();
 
   Recipe(String recipeName, int portions, List<Ingredient> ingredients, bool isFreezable, List<dynamic> categories) {
     _recipeName = recipeName;

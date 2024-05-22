@@ -1,7 +1,9 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import '../RecipeBook/IngredientModel.dart';
 import '../UserData/UserData.dart';
 import '../ViewElements.dart';
+import '../WebStore/mongoData.dart';
 
 Widget PantryView({required List<Ingredient> existingIngredients, required UserData userData}) {
   return Center(
@@ -60,11 +62,11 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
         onExpansionChanged: (value) {
           setState(() {});
         },
-          initiallyExpanded: true,
-            title: Text(c),
-            children: inactivePantryItemTiles(c) + <Widget>[
-              GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, refresh: refreshCategoryTiles, userData: widget.userData, existingIngredients: widget.existingIngredients,)
-            ],
+        initiallyExpanded: true,
+        title: Text(c),
+        children: inactivePantryItemTiles(c) + <Widget>[
+          GenerateEditIngredientForm(cat: cat, category: c, ingredientName: ingredientName, ingredientAmount: ingredientAmount, ingredientUnit: ingredientUnit, refresh: refreshCategoryTiles, userData: widget.userData, existingIngredients: widget.existingIngredients,)
+        ],
       );
       tiles.add(categoryTile);
       //cat[c] = null;
@@ -124,6 +126,7 @@ class GenerateEditIngredientForm extends StatefulWidget {
   final UserData userData;
   final List<Ingredient> existingIngredients;
   final void Function() refresh;
+
   GenerateEditIngredientForm({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.refresh, required this.userData, required this.existingIngredients});
 
   @override
@@ -141,11 +144,16 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
           children: [
             InsertEditPantryItemTile(editPantryItemTile: widget.cat[widget.category]),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 setState(() {});
                 if (widget.cat[widget.category] == null) {
                   pantryItemKey.currentState?.reset();
-                  widget.cat[widget.category] = EditIngredientTile(widget.existingIngredients, widget.category);
+                  await getUnitsForIngredientFromDB(widget.category).then((us) {
+                    List<String> units = us;
+                    widget.cat[widget.category] = EditIngredientTile(widget.existingIngredients, widget.category, units);
+                    setState(() {});
+                  });
+                  //widget.cat[widget.category] = EditIngredientTile(cat: widget.cat, category: widget.category, existingIngredients: widget.existingIngredients, ingredientAmount: widget.ingredientAmount, ingredientName: widget.ingredientName, ingredientUnit: widget.ingredientUnit, pantryItemKey: pantryItemKey, userData: widget.userData, units: units);
                 }
               },
               child: const Text("Add ingredient"),
@@ -155,8 +163,8 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
     );
   }
 
-  Widget EditIngredientTile(List<Ingredient> existingIngredients, String category) {
-    List<String> units = ['grams', 'milliliters', 'pieces'];
+  Widget EditIngredientTile(List<Ingredient> existingIngredients, String category, List<String> units) {
+    //List<String> units = ['grams', 'milliliters', 'pieces'];
     List<String> existingIngredientNames = [];
     existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
       if (i.getCategory() == category) {
@@ -188,21 +196,33 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
               SizedBox(
                 width: 118,
                 height: 80,
-                child: DropdownButtonFormField(
-                  value: selectedIngredient,
+                child: DropdownSearch<String>(
+                  popupProps: const PopupProps.menu(
+                    searchDelay: Duration(seconds: 0),
+                    fit: FlexFit.loose,
+                    showSearchBox: true,
+                    searchFieldProps: TextFieldProps(
+                        autofocus: true
+                    ),
+                  ),
+                  selectedItem: selectedIngredient,
                   validator: (name) {
                     if (name == null) return "Required *";
-                    widget.ingredientName = name;
+                    widget.ingredientName = name.toString();
                     return null;
                   },
-                  hint: const Text("Select..."),
-                  items: existingIngredientNames.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Select...",
+                      hintText: "Select...",
+                    ),
+                  ),
+                  items: existingIngredientNames.map<String>((String value) {
+                    return value;
                   }).toList(),
-                  onChanged: (value) => {selectedIngredient = value},
+                  onChanged: (value) async {
+                    selectedIngredient = value.toString();
+                  },
                 ),
               ),
               SizedBox(
@@ -220,71 +240,234 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
               SizedBox(
                 width: 100,
                 height: 80,
-                child: DropdownButtonFormField(
+                child: DropdownSearch<String>(
                   validator: (unit) {
-                    widget.ingredientUnit = unit!;
+                    if (unit == null) return "Required *";
+                    widget.ingredientUnit = unit;
                     return null;
                   },
-                  value: selectedUnit,
-                  items: units.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
+                  selectedItem: selectedUnit,
+                  items: units.map<String>((String value) {
+                    return value;
                   }).toList(),
                   onChanged: (value) => {selectedIngredient = value},
                 ),
               ),
             ],),
-          Row(children: [
-            IconButton(
-                onPressed: () {
-                  widget.cat[widget.category] = null;
-                  setState(() {});
-                },
-                icon: const Icon(Icons.delete)
-            ),
-            IconButton(
-                onPressed: () async {
-                  setState(() {});
-                  if (pantryItemKey.currentState!.validate()) {
-                    Ingredient i = IngredientBuilder().withIngredientName(
-                        widget.ingredientName).withAmount(
-                        int.parse(widget.ingredientAmount),
-                        widget.ingredientUnit)
-                        .withCategory(widget.category)
-                        .build();
-                    widget.userData.getPantry().putInPantry(i);
-                    pantryItemKey.currentState?.reset();
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () {
                     widget.cat[widget.category] = null;
-                    await widget.userData.saveUserData();
-                    widget.refresh();
-                  }
-                },
-                icon: const Icon(Icons.coronavirus)
-            ),
-          ],),
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.delete)
+              ),
+              IconButton(
+                  onPressed: () async {
+                    setState(() {});
+                    if (pantryItemKey.currentState!.validate()) {
+                      Ingredient i = IngredientBuilder().withIngredientName(
+                          widget.ingredientName).withAmount(
+                          int.parse(widget.ingredientAmount),
+                          widget.ingredientUnit)
+                          .withCategory(widget.category)
+                          .build();
+                      widget.userData.getPantry().putInPantry(i);
+                      pantryItemKey.currentState?.reset();
+                      widget.cat[widget.category] = null;
+                      await widget.userData.saveUserData();
+                      widget.refresh();
+                    }
+                  },
+                  icon: const Icon(Icons.check_circle)
+              ),
+            ],),
         ],
       ),
     );
   }
-}
+
+
+  }
+
+/*class EditIngredientTile extends StatefulWidget {
+  final List<Ingredient> existingIngredients;
+  final Map<String, Widget?> cat;
+  final String category;
+  final GlobalKey<FormState> pantryItemKey;
+  final UserData userData;
+  final List<String> units;
+  String ingredientName;
+  String ingredientAmount;
+  String ingredientUnit;
+
+  EditIngredientTile({super.key, required this.cat, required this.category, required this.ingredientName, required this.ingredientAmount, required this.ingredientUnit, required this.userData, required this.existingIngredients, required this.pantryItemKey, required this.units});
+
+
+  @override
+  State<EditIngredientTile> createState() => _EditIngredientTileState();
+}*/
+
+/*class _EditIngredientTileState extends State<EditIngredientTile> {
+  @override
+  Widget build(BuildContext context) {
+    //List<String> units = [];
+    List<String> existingIngredientNames = [];
+    existingIngredientNames.addAll(widget.existingIngredients.map((Ingredient i) {
+      if (i.getCategory() == widget.category) {
+        return i.getIngredientName();
+      }
+      return "";
+    }));
+
+    existingIngredientNames.removeWhere((String element) => element == "");
+
+    String? selectedIngredient;
+    String? selectedUnit;
+    return Container(
+      width: getScreenWidth(),
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
+      color: const Color(0xFFF3F9F6),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                width: 118,
+                height: 80,
+                child: DropdownSearch<String>(
+                  popupProps: const PopupProps.menu(
+                    searchDelay: Duration(seconds: 0),
+                    fit: FlexFit.loose,
+                    showSearchBox: true,
+                    searchFieldProps: TextFieldProps(
+                        autofocus: true
+                    ),
+                  ),
+                  selectedItem: selectedIngredient,
+                  validator: (name) {
+                    if (name == null) return "Required *";
+                    widget.ingredientName = name.toString();
+                    return null;
+                  },
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Select...",
+                      hintText: "Select...",
+                    ),
+                  ),
+                  items: existingIngredientNames.map<String>((String value) {
+                    return value;
+                  }).toList(),
+                  onChanged: (value) async {
+                    selectedIngredient = value.toString();
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 60,
+                height: 80,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  validator: (quantity) {
+                    if (quantity == null || quantity.isEmpty || int.parse(quantity) == 0) return "Required *";
+                    widget.ingredientAmount = quantity;
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 100,
+                height: 80,
+                child: DropdownSearch<String>(
+                  validator: (unit) {
+                    if (unit == null) return "Required *";
+                    widget.ingredientUnit = unit;
+                    return null;
+                  },
+                  selectedItem: selectedUnit,
+                  items: widget.units.map<String>((String value) {
+                    return value;
+                  }).toList(),
+                  onChanged: (value) => {selectedIngredient = value},
+                ),
+              ),
+              /*SizedBox(
+                width: 100,
+                height: 80,
+                child: DropDownForm(
+                  //enabled: units.isNotEmpty,
+                  validator: (unit) {
+                    if (unit == null) return "Required *";
+                    widget.ingredientUnit = unit;
+                    return null;
+                  },
+                  selectedItem: selectedUnit,
+                  items: units.map<dynamic>((dynamic value) {
+                    return units.first;
+                  }).toList(),
+                  onChanged: (value) => {selectedIngredient = value},
+                ),
+              ),*/
+            ],),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    widget.cat[widget.category] = null;
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.delete)
+              ),
+              IconButton(
+                  onPressed: () async {
+                    setState(() {});
+                    if (widget.pantryItemKey.currentState!.validate()) {
+                      Ingredient i = IngredientBuilder().withIngredientName(
+                          widget.ingredientName).withAmount(
+                          int.parse(widget.ingredientAmount),
+                          widget.ingredientUnit)
+                          .withCategory(widget.category)
+                          .build();
+                      widget.userData.getPantry().putInPantry(i);
+                      widget.pantryItemKey.currentState?.reset();
+                      widget.cat[widget.category] = null;
+                      await widget.userData.saveUserData();
+                      setState(() {});
+                    }
+                  },
+                  icon: const Icon(Icons.check_circle)
+              ),
+            ],),
+        ],
+      ),
+    );
+  }
+
+}*/
 
 class InsertEditPantryItemTile extends StatefulWidget {
   final dynamic editPantryItemTile;
 
   const InsertEditPantryItemTile({super.key, this.editPantryItemTile});
-  
+
   @override
   State<InsertEditPantryItemTile> createState() => _InsertEditPantryItemTileState();
 }
 
 class _InsertEditPantryItemTileState extends State<InsertEditPantryItemTile>{
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[editPantryItemTile()]
+        children: <Widget>[editPantryItemTile()]
     );
   }
 
