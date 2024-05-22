@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../WebStore/mongoData.dart';
+
 class Ingredient {
   String _storeName = "";
   String _ingredientName = "";
@@ -20,7 +22,6 @@ class Ingredient {
     _unit = builder._unit;
     _nutritionalInfo = builder._nutritionalInfo;
     _totalPrice = builder._totalPrice;
-    //_perUnitPrice = builder._perUnitPrice;
     _storage = builder._storage;
     _expiryInfo = builder._expiryInfo;
   }
@@ -32,6 +33,20 @@ class Ingredient {
   int getQuantity() {
     return _quantity;
   }
+
+  /*Future<int> getQuantityForMealPlan() async {
+    // we have _quantity in _units
+    // accept ml and g only
+    if (_unit == "ml" || _unit == "g") {
+      return _quantity;
+    }
+
+    List<String> possibleUnits = await getUnitsForIngredientFromDB(_ingredientName);
+
+    if () {
+
+    }
+  }*/
 
   String getIngredientName({bool? normalised}) {
     if (normalised == null || !normalised) return _ingredientName;
@@ -54,6 +69,7 @@ class Ingredient {
     //_perUnitPrice = 0;
     _totalPrice = 0;
   }
+
 }
 
 class IngredientBuilder {

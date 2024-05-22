@@ -148,7 +148,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                 setState(() {});
                 if (widget.cat[widget.category] == null) {
                   pantryItemKey.currentState?.reset();
-                  await getUnitsForIngredientFromDB(widget.category).then((us) {
+                  await getUnitsForCategoryFromDB(widget.category).then((us) {
                     List<String> units = us;
                     widget.cat[widget.category] = EditIngredientTile(widget.existingIngredients, widget.category, units);
                     setState(() {});

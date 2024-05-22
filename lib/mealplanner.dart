@@ -35,8 +35,8 @@ class MealPlanner {
       "ingredient": ingredientNames,
       "recipe": userData.getRecipeBook().getRecipeNames(normalised: true),
       "pantry_item": {
-        for (Ingredient i in ingredients) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : 0,
-        for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : i.getQuantity()
+        for (Ingredient i in ingredients) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : [0, "grams"],
+        for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : [i.getQuantity(), i.getUnit()]
       },
       "nutrient_needed": {
         "energy": [userData.getDailyCalories(), userData.getDailyCalories()],
@@ -58,7 +58,7 @@ class MealPlanner {
       ],*/
       "needs": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
-          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : i.getQuantity()
+          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : [i.getQuantity(), i.getUnit()]
         }
       }
     };

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:budget_meal/Mealplan/MealPlanCollectionModel.dart';
 import 'package:budget_meal/Pantry/PantryModel.dart';
 import 'package:budget_meal/RecipeBook/RecipeBookModel.dart';
+import 'package:budget_meal/ShoppingList/ShoppingListModel.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../Mealplan/MealPlanModel.dart';
@@ -23,6 +24,7 @@ class UserData {
   RecipeBook _recipeBook = RecipeBook();
   MealPlanCollection _mealPlanCollection = MealPlanCollection();
   NutritionalInformation? _nutritionalInformation;
+  ShoppingList? _shoppingList;
 
   UserData();
 
@@ -69,6 +71,22 @@ class UserData {
     _recipeBook = parseRecipeBook(parsedJson["recipeBook"]);
     _mealPlanCollection = parseMealPlanCollection(parsedJson["mealPlanCollection"]);
     _nutritionalInformation = parseNutritionalInformation(parsedJson["nutritionalTargets"]);
+    _shoppingList = parseShoppingList(parsedJson["shoppingList"]);
+  }
+
+  ShoppingList parseShoppingList(Map<String, dynamic> parsedJson) {
+    ShoppingList shoppingList = ShoppingList();
+    for (String ingredientTag in parsedJson.keys) {
+      Map<String, dynamic> entry = parsedJson[ingredientTag];
+      String intendedRecipeName = entry["intendedRecipeName"];
+      int amountToBuy = entry["amountToBuy"];
+      String storeName = entry["storeName"];
+      int price = entry["price"];
+      String ingredientName = entry["ingredientName"];
+      ShoppingListItem i = ShoppingListItem(intendedRecipeName, ingredientTag, amountToBuy, storeName, price, ingredientName);
+      shoppingList.addItem(i);
+    }
+    return shoppingList;
   }
 
   List<Ingredient> parseUnwantedIngredients(Map<String, dynamic> parsedJson) {
@@ -93,11 +111,9 @@ class UserData {
     NutritionalInformation? nutritionalInformation;
 
     for (String nutritionName in parsedJson.keys) {
-      print("nutrition name $nutritionName");
       Map<String, dynamic> entry = parsedJson[nutritionName];
       int lowerLimit = entry["lower_limit"];
       int upperLimit = entry["upper_limit"];
-      print("limits are $lowerLimit - $upperLimit");
       switch (nutritionName) {
         case "fats":
           fats = Fats(lowerLimit, upperLimit);
@@ -124,7 +140,6 @@ class UserData {
       nutritionalInformation = NutritionalInformation(fats, saturates, carbs, sugars, protein, salt);
     }
 
-    print("parsed Nutritional information $nutritionalInformation");
 
     return nutritionalInformation;
   }
@@ -138,7 +153,6 @@ class UserData {
       List<dynamic> meals = entry["meals"];
       Map<String, dynamic> plan = entry["plan"];
       MealPlan mealPlan = MealPlan(start, end, plan, meals, name: mealPlanName);
-      print("Parsed meal plan $mealPlanName with $meals");
       mealPlanCollection.addMealPlan(mealPlan);
     }
     return mealPlanCollection;
@@ -166,7 +180,7 @@ class UserData {
       int portions = entry["portions"];
       List<Ingredient> ingredients = [];
       for (Map<String, dynamic> needed_ing in entry["needed_ingredients"]) {
-        String ingredientName = needed_ing["ingredientName"];
+        String ingredientName = needed_ing["ingredientName"].toString().replaceAll("_", " ");
         int ingredientQuantity = needed_ing["ingredientQuantity"];
         String ingredientUnit = needed_ing["ingredientUnit"];
         Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).build();
@@ -211,9 +225,11 @@ class UserData {
                 "pantry": ${_pantry.toJson()},
                 "recipeBook": ${_recipeBook.toJson()},
                 "mealPlanCollection": ${_mealPlanCollection.toJson()},
-                "nutritionalTargets": ${_nutritionalInformation?.toJson()}
+                "nutritionalTargets": ${_nutritionalInformation?.toJson()},
+                "shoppingList": ${_shoppingList?.toJson()}
               }
           ''');
+    print("Saved shoppingList $_shoppingList");
     print("Saved.");
   }
 
@@ -263,6 +279,10 @@ class UserData {
     return _nutritionalInformation;
   }
 
+  ShoppingList? getShoppingList() {
+    return _shoppingList;
+  }
+
   // SETTERS
 
   void setUsername(String name) {
@@ -295,6 +315,10 @@ class UserData {
 
   void setNutritionalInformation(NutritionalInformation n) {
     _nutritionalInformation = n;
+  }
+
+  void setShoppingList(ShoppingList shoppingList) {
+    _shoppingList = shoppingList;
   }
 
 }

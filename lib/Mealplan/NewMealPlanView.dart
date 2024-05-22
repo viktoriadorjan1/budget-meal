@@ -6,6 +6,7 @@ import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 import '../RecipeBook/RecipeBookModel.dart';
+import '../ShoppingList/ShoppingListModel.dart';
 import '../UserData/UserData.dart';
 import '../ViewElements.dart';
 import '../main.dart';
@@ -224,6 +225,8 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
       return const Center();
     }
 
+    ShoppingList shoppingList = generateShoppingList(jsonResults);
+
     return Center(
       child: Column(
         children: createDayTiles(days, jsonResults) + [
@@ -232,13 +235,23 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Saving..."))
                 );
+                // SAVING MEAL PLAN
                 // delete old meal plan from collection, if exists
                 MealPlan oldPlan = widget.plan ?? MealPlan(DateTime.now(), DateTime.now(), {}, []);
                 widget.userData.getMealPlanCollection().removeMealPlan(oldPlan);
                 // add new meal plan to the collection
                 MealPlan newPlan = MealPlan(DateTime.parse(days.first), DateTime.parse(days.last), jsonResults, selected_meals);
                 widget.userData.getMealPlanCollection().addMealPlan(newPlan);
+
+                // SAVING SHOPPING LIST
+                // replace (or create) shopping list
+                widget.userData.setShoppingList(shoppingList);
+                print("Set shopping list");
+
+                // SAVING...
                 await widget.userData.saveUserData();
+
+                // navigate back to meal plan list
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, pageCount: 2)));
                 },
               child: const Text("ACCEPT")
@@ -300,5 +313,31 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
       items.add(MultiSelectItem<String>(mealOption, mealOption));
     });
     return items;
+  }
+
+  ShoppingList generateShoppingList(Map<String, dynamic> jsonResults) {
+    print("Generating shopping list...");
+
+    if (jsonResults["buy"] == null) return ShoppingList();
+
+    List<dynamic> buyList = jsonResults["buy"];
+
+    ShoppingList shoppingList = ShoppingList();
+    for (List<dynamic> buyItem in buyList) {
+      String recipeName = buyItem[0];
+      String ingredientTag = buyItem[1];
+      int amount = int.parse(buyItem[2]);
+      String storeName = buyItem[3];
+      String ingredientName = buyItem[4];
+      int price = int.parse(buyItem[5]);
+
+
+      print("Added shopping list item $ingredientTag");
+      ShoppingListItem item = ShoppingListItem(recipeName, ingredientTag, amount, "Aldi", price, ingredientName);
+      shoppingList.addItem(item);
+    }
+
+    return shoppingList;
+
   }
 }

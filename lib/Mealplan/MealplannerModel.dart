@@ -19,7 +19,6 @@ Future<String> generateMealPlan(UserData userData, List<String> days, List<dynam
     print(e);
   }
 
-
   print("Code: ${response.statusCode}");
   print("Body: ${response.body}");
   results = response.body;

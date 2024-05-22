@@ -25,7 +25,7 @@ class _ScheduleState extends State<Schedule> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(height: 50),
-          TitleBar("Meal plan"),
+          TitleBar("Meal plans"),
           Expanded(
             child: ListView(
                 children: [
