@@ -79,13 +79,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Color ingColor = Colors.black;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    //super.initState();
     if (widget.recipe != null) {
       recipeName = widget.recipe!.getRecipeName();
       categories = widget.recipe!.getCategories();
       portionSize = widget.recipe!.getPortionSize().toString();
-      ingredients = widget.recipe!.getIngredients();
+      ingredients = widget.recipe!.getIngredients().map((Ingredient i) => i).toList();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Form(
       key: _key,
       child: Column(
@@ -109,7 +114,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               MultiSelectItem<String>("dessert", "dessert"),
             ],
             initialValue: categories,
-            title: const Text("Meal type * (e.g. breakfast)"),
+            title: const Text("Meal type * (e.g. breakfast, lunch, ...)"),
             onTap: (values) {},
             validator: (cats) {
               if (cats == null || cats.isEmpty) {
@@ -124,7 +129,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             initialValue: portionSize.toString(),
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
-                labelText: "Portion size *",
+                labelText: "How many people does this recipe serve? *",
             ),
             validator: (size) {
               if (size == null || size.isEmpty || size == "0") return "Please enter how many portions this recipe makes";
@@ -157,7 +162,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
           ElevatedButton(
             onPressed: () async {
               if (ingredients.isEmpty) {
-                print("EMPTY");
                 setState(() {
                   ingColor = Colors.red;
                 });
@@ -177,6 +181,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               }
             },
             child: const Text("OK")
+          ),
+          ElevatedButton(
+              onPressed: () async {
+                // navigate back
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, pageCount: 0)));
+              },
+              child: const Text("CANCEL")
           ),
       ],
     ));

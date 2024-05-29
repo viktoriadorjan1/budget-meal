@@ -38,7 +38,6 @@ class MealPlanCollection {
         "plan" : plan.plan
       }
     };
-    print("SAVED: ${jsonEncode(generateJson())}");
     return jsonEncode(generateJson());
   }
 

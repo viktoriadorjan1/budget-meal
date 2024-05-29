@@ -24,7 +24,7 @@ class UserData {
   RecipeBook _recipeBook = RecipeBook();
   MealPlanCollection _mealPlanCollection = MealPlanCollection();
   NutritionalInformation? _nutritionalInformation;
-  ShoppingList? _shoppingList;
+  ShoppingList _shoppingList = ShoppingList();
 
   UserData();
 
@@ -226,7 +226,7 @@ class UserData {
                 "recipeBook": ${_recipeBook.toJson()},
                 "mealPlanCollection": ${_mealPlanCollection.toJson()},
                 "nutritionalTargets": ${_nutritionalInformation?.toJson()},
-                "shoppingList": ${_shoppingList?.toJson()}
+                "shoppingList": ${_shoppingList.toJson()}
               }
           ''');
     print("Saved shoppingList $_shoppingList");

@@ -169,7 +169,10 @@ class _SetupPageState extends State<SetupPage>{
                           Wrap(
                               children: [
                                 ChoiceChip(
-                                  label: const Text("Sedentary (little to no exercise)"),
+                                  labelStyle: const TextStyle(
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                  label: const Text("Sedentary (little to no exercise)", softWrap: true, maxLines: 2,),
                                   selected: _activityLevel == "Sedentary",
                                   onSelected: (bool selected) {
                                     setState(() {
@@ -178,7 +181,10 @@ class _SetupPageState extends State<SetupPage>{
                                   },
                                 ),
                                 ChoiceChip(
-                                  label: const Text("Lightly active (light exercise 1-3 days a week)"),
+                                  labelStyle: const TextStyle(
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                  label: const Text("Lightly active (light exercise 1-3 days a week)", softWrap: true, maxLines: 2,),
                                   selected: _activityLevel == "Lightly active",
                                   onSelected: (bool selected) {
                                     setState(() {
@@ -187,7 +193,10 @@ class _SetupPageState extends State<SetupPage>{
                                   },
                                 ),
                                 ChoiceChip(
-                                  label: const Text("Moderately active (light to moderate exercise 4-5 days a week)"),
+                                  labelStyle: const TextStyle(
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                  label: const Text("Moderately active (light to moderate exercise 4-5 days a week)", softWrap: true, maxLines: 2,),
                                   selected: _activityLevel == "Moderately active",
                                   onSelected: (bool selected) {
                                     setState(() {
@@ -196,7 +205,10 @@ class _SetupPageState extends State<SetupPage>{
                                   },
                                 ),
                                 ChoiceChip(
-                                  label: const Text("Active (moderate exercise 6-7 days a week or intense exercise 3-4 days a week)"),
+                                  labelStyle: const TextStyle(
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                  label: const Text("Active (moderate exercise 6-7 days a week or intense exercise 3-4 days a week)", softWrap: true, maxLines: 2,),
                                   selected: _activityLevel == "Active",
                                   onSelected: (bool selected) {
                                     setState(() {
@@ -205,7 +217,10 @@ class _SetupPageState extends State<SetupPage>{
                                   },
                                 ),
                                 ChoiceChip(
-                                  label: const Text("Very active (intense exercise 6-7 days a week, sports training, or physical job)"),
+                                  labelStyle: const TextStyle(
+                                      overflow: TextOverflow.visible,
+                                  ),
+                                  label: const Text("Very active (intense exercise 6-7 days a week, sports training, or physical job)", softWrap: true, maxLines: 2,),
                                   selected: _activityLevel == "Very active",
                                   onSelected: (bool selected) {
                                     setState(() {

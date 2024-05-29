@@ -14,11 +14,11 @@ class MealPlanner {
   String createMealPlan(UserData userData, List<String> days, List<dynamic> meals) {
 
     List<String> ingredientNames = [];
-    List<Ingredient> ingredients = [];
+    List<Ingredient> ingredientsFromRecipes = [];
     for (Recipe recipe in userData.getRecipeBook().getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
-        if (!ingredients.contains(ingredient)) {
-          ingredients.add(ingredient);
+        if (!ingredientsFromRecipes.contains(ingredient)) {
+          ingredientsFromRecipes.add(ingredient);
         }
         if (!ingredientNames.contains(ingredient.getIngredientName(normalised: true))) {
           ingredientNames.add(ingredient.getIngredientName(normalised: true));
@@ -35,17 +35,18 @@ class MealPlanner {
       "ingredient": ingredientNames,
       "recipe": userData.getRecipeBook().getRecipeNames(normalised: true),
       "pantry_item": {
-        for (Ingredient i in ingredients) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : [0, "grams"],
-        for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : [i.getQuantity(), i.getUnit()]
+        for (Ingredient i in ingredientsFromRecipes) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : [0, "grams"] else i.getIngredientName(normalised: true) : [i.getQuantity().round(), i.getUnit()],
+        // only consider pantry items that are needed for recipes
+        //for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : [i.getQuantity().round(), i.getUnit()]
       },
       "nutrient_needed": {
         "energy": [userData.getDailyCalories(), userData.getDailyCalories()],
-        "protein": [userData.getNutritionalInformation()!.getProtein().getLowerLimit() * 100, userData.getNutritionalInformation()!.getProtein().getUpperLimit() * 100],
-        "fat": [userData.getNutritionalInformation()!.getFats().getLowerLimit() * 100, userData.getNutritionalInformation()!.getFats().getUpperLimit() * 100],
-        "saturates": [userData.getNutritionalInformation()!.getSaturates().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSaturates().getUpperLimit() * 100],
-        "carbs": [userData.getNutritionalInformation()!.getCarbs().getLowerLimit() * 100, userData.getNutritionalInformation()!.getCarbs().getUpperLimit() * 100],
-        "sugar": [userData.getNutritionalInformation()!.getSugars().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSugars().getUpperLimit() * 100],
-        "salt": [userData.getNutritionalInformation()!.getSalt().getLowerLimit() * 100, userData.getNutritionalInformation()!.getSalt().getUpperLimit() * 100]
+        "protein": [userData.getNutritionalInformation()!.getProtein().getLowerLimit(), userData.getNutritionalInformation()!.getProtein().getUpperLimit()],
+        "fat": [userData.getNutritionalInformation()!.getFats().getLowerLimit(), userData.getNutritionalInformation()!.getFats().getUpperLimit()],
+        "saturates": [userData.getNutritionalInformation()!.getSaturates().getLowerLimit(), userData.getNutritionalInformation()!.getSaturates().getUpperLimit()],
+        "carbs": [userData.getNutritionalInformation()!.getCarbs().getLowerLimit(), userData.getNutritionalInformation()!.getCarbs().getUpperLimit()],
+        "sugar": [userData.getNutritionalInformation()!.getSugars().getLowerLimit(), userData.getNutritionalInformation()!.getSugars().getUpperLimit()],
+        "salt": [userData.getNutritionalInformation()!.getSalt().getLowerLimit(), userData.getNutritionalInformation()!.getSalt().getUpperLimit()]
       },
       // this is useful when this specific ingredient is NOT in the web store but is in the pantry and a meal can be scheduled with it
       /*"ing_has_nutrient": [
@@ -58,7 +59,7 @@ class MealPlanner {
       ],*/
       "needs": {
         for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
-          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : [i.getQuantity(), i.getUnit()]
+          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : [i.getQuantity() / r.getPortionSize(), i.getUnit()]
         }
       }
     };
