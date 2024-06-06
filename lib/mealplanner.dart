@@ -12,10 +12,30 @@ class MealPlanner {
   // and a recipe book (all recipes owned by user),
   // create a meal plan.
   String createMealPlan(UserData userData, List<String> days, List<dynamic> meals) {
+    //print("createMealPlan...");
+    // Only considering relevant recipes based on the schedulable meals
+    // e.g. do not include lunch recipes if we wish to schedule breakfast only
+    RecipeBook relevantRecipeBookForMeals = RecipeBook();
+    for (dynamic m in meals) {
+      //print("We want $m");
+      for (Recipe r in userData.getRecipeBook().getRecipesWithCategory(m)) {
+        //print("Inspect recipe ${r.getRecipeName()} with ${r.getCategories()}");
+        if (!relevantRecipeBookForMeals.contains(r)) {
+          List<dynamic> finalCategories = r.getCategories().where((element) => meals.contains(element)).toList();
+          //print("Adding ${r.getRecipeName()} with $finalCategories");
+          Recipe newRecipe = Recipe(r.getRecipeName(), r.getPortionSize(), r.getIngredients(), finalCategories);
+          relevantRecipeBookForMeals.addRecipe(newRecipe);
+        }
+      }
+    }
 
+    //print("Relevant recipebook DONE");
+
+    // Only consider ingredients from recipes that can be scheduled.
+    // e.g. if mushroom is needed for a lunch item only, but we wish to schedule breakfast only, do not include
     List<String> ingredientNames = [];
     List<Ingredient> ingredientsFromRecipes = [];
-    for (Recipe recipe in userData.getRecipeBook().getRecipes()) {
+    for (Recipe recipe in relevantRecipeBookForMeals.getRecipes()) {
       for (Ingredient ingredient in recipe.getIngredients()) {
         if (!ingredientsFromRecipes.contains(ingredient)) {
           ingredientsFromRecipes.add(ingredient);
@@ -26,17 +46,19 @@ class MealPlanner {
       }
     }
 
+    //print("Relevant ingredients DONE");
+
     Map<String, dynamic> generateJson() => {
       "day": [for (String d in days) d],
       "meals": [for (String m in meals) m],
       "meal": {
-        for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
+        for (Recipe r in relevantRecipeBookForMeals.getRecipes()) r.getRecipeName(normalised: true): r.getCategories()
       },
       "ingredient": ingredientNames,
-      "recipe": userData.getRecipeBook().getRecipeNames(normalised: true),
+      "recipe": relevantRecipeBookForMeals.getRecipeNames(normalised: true),
       "pantry_item": {
-        for (Ingredient i in ingredientsFromRecipes) if (!userData.getPantry().getPantryItems().contains(i)) i.getIngredientName(normalised: true) : [0, "grams"] else i.getIngredientName(normalised: true) : [i.getQuantity().round(), i.getUnit()],
-        // only consider pantry items that are needed for recipes
+        // only consider pantry items that are needed for the relevant recipes
+        for (Ingredient i in ingredientsFromRecipes) if (userData.getPantry().contains(i) == null) i.getIngredientName(normalised: true) : [0, "grams"] else userData.getPantry().contains(i)?.getIngredientName(normalised: true) : [userData.getPantry().contains(i)?.getQuantity().round(), userData.getPantry().contains(i)?.getUnit()],
         //for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : [i.getQuantity().round(), i.getUnit()]
       },
       "nutrient_needed": {
@@ -58,14 +80,18 @@ class MealPlanner {
         }
       ],*/
       "needs": {
-        for (Recipe r in userData.getRecipeBook().getRecipes()) r.getRecipeName(normalised: true): {
+        for (Recipe r in relevantRecipeBookForMeals.getRecipes()) r.getRecipeName(normalised: true): {
           for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : [i.getQuantity() / r.getPortionSize(), i.getUnit()]
         }
       }
     };
 
-    var finalJson = jsonEncode(generateJson());
-    print(finalJson);
+    Map<String, dynamic> json = generateJson();
+
+    //print("JSON DONE");
+
+    var finalJson = jsonEncode(json);
+    //print(finalJson);
     return finalJson;
 
     // TODO: meal plan (as a file)
@@ -109,7 +135,7 @@ class MealPlanner {
     ceIngredients.add(milk);
     ceIngredients.add(cerealFlakes);
 
-    Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, ["breakfast"]);
 
     // sandwich recipe
     Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(200, 'g').build();
@@ -117,7 +143,7 @@ class MealPlanner {
     List<Ingredient> saIngredients = [];
     saIngredients.add(bread);
 
-    Recipe sandwichRecipe = Recipe("sandwich", 1, saIngredients, false, ["breakfast", "lunch"]);
+    Recipe sandwichRecipe = Recipe("sandwich", 1, saIngredients, ["breakfast", "lunch"]);
 
     testRecipeBook.addRecipe(cerealRecipe);
     testRecipeBook.addRecipe(sandwichRecipe);
