@@ -42,7 +42,7 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.plan != null && results == null) {
-      print("Editing ${widget.plan?.name} with ${widget.plan?.startDate} - ${widget.plan?.endDate}");
+      //print("Editing ${widget.plan?.name} with ${widget.plan?.startDate} - ${widget.plan?.endDate}");
       startDate = widget.plan?.startDate;
       endDate = widget.plan?.endDate;
       results = jsonEncode(widget.plan!.plan);
@@ -246,7 +246,7 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
                 // SAVING SHOPPING LIST
                 // replace (or create) shopping list
                 widget.userData.setShoppingList(shoppingList);
-                print("Set shopping list");
+                //print("Set shopping list");
 
                 // SAVING...
                 await widget.userData.saveUserData();
@@ -316,7 +316,7 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   }
 
   ShoppingList generateShoppingList(Map<String, dynamic> jsonResults) {
-    print("Generating shopping list...");
+    //print("Generating shopping list...");
 
     if (jsonResults["buy"] == null) return ShoppingList();
 
@@ -332,7 +332,7 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
       int price = int.parse(buyItem[5]);
 
 
-      print("Added shopping list item $ingredientTag");
+      //print("Added shopping list item $ingredientTag");
       ShoppingListItem item = ShoppingListItem(recipeName, ingredientTag, amount, "Aldi", price, ingredientName);
       shoppingList.addItem(item);
     }

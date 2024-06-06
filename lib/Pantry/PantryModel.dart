@@ -70,4 +70,14 @@ class Pantry {
 
     return jsonEncode(generateJson());
   }
+
+  // returns the ingredient from the pantry if exists, null otherwise
+  Ingredient? contains(Ingredient ingredient) {
+    for (Ingredient i in _ingredients) {
+      if (i.getIngredientName() == ingredient.getIngredientName()) {
+        return i;
+      }
+    }
+    return null;
+  }
 }

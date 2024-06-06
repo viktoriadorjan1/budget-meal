@@ -59,6 +59,9 @@ class UserData {
   void parseUserDataFromJson(String json) {
     final Map<String, dynamic> parsedJson = jsonDecode(json);
 
+    //print(parsedJson["mealPlanCollection"]);
+    //print(parsedJson["shoppingList"]);
+
     _userName = parsedJson['userName'];
     _sex = parsedJson["sex"];
     _age = parsedJson["age"];
@@ -186,7 +189,7 @@ class UserData {
         Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).build();
         ingredients.add(i);
       }
-      Recipe r = Recipe(recipeName, portions, ingredients, false, categories);
+      Recipe r = Recipe(recipeName, portions, ingredients, categories);
       recipeBook.addRecipe(r);
       // TODO: implement freezable.
     }
@@ -229,7 +232,7 @@ class UserData {
                 "shoppingList": ${_shoppingList.toJson()}
               }
           ''');
-    print("Saved shoppingList $_shoppingList");
+    //print("Saved shoppingList $_shoppingList");
     print("Saved.");
   }
 
@@ -319,6 +322,16 @@ class UserData {
 
   void setShoppingList(ShoppingList shoppingList) {
     _shoppingList = shoppingList;
+  }
+
+  // TESTING PURPOSES
+
+  void setRecipeBook(RecipeBook recipeBook) {
+    _recipeBook = recipeBook;
+  }
+
+  void setPantry(pantry) {
+    _pantry = pantry;
   }
 
 }

@@ -19,7 +19,7 @@ class ShoppingList {
         "ingredientName": i.getIngredientName()
       }
     };
-    print("Shopping list to JSON: ${jsonEncode(generateJson())}");
+    //print("Shopping list to JSON: ${jsonEncode(generateJson())}");
     return jsonEncode(generateJson());
   }
 

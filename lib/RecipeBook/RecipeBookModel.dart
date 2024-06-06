@@ -68,20 +68,29 @@ class RecipeBook {
 
     return jsonEncode(generateJson());
   }
+
+  bool contains(Recipe r) {
+    for (Recipe rec in _recipes) {
+      if (rec.getRecipeName() == r.getRecipeName()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 class Recipe {
   String _recipeName = "";
   int _portions = 0;
   List<Ingredient> _ingredients = [];
-  bool _isFreezable = false;
+  //bool _isFreezable = false;
   List<dynamic> _categories = [];
 
-  Recipe(String recipeName, int portions, List<Ingredient> ingredients, bool isFreezable, List<dynamic> categories) {
+  Recipe(String recipeName, int portions, List<Ingredient> ingredients, List<dynamic> categories) {
     _recipeName = recipeName;
     _portions = portions;
     _ingredients = ingredients;
-    _isFreezable = isFreezable;
+    //_isFreezable = isFreezable;
     _categories = categories;
   }
 
@@ -107,6 +116,10 @@ class Recipe {
 
   void removeFromCategory(String category) {
     _categories.remove(category);
+  }
+
+  void setCategories(List newCategories) {
+    _categories = newCategories;
   }
 
 }

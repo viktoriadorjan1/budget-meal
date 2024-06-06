@@ -171,10 +171,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     const SnackBar(content: Text("Saving..."))
                 );
                 // delete old recipe from recipe book, if exists
-                Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], false, []);
+                Recipe oldRecipe = widget.recipe ?? Recipe("", 0, [], []);
                 widget.userData.getRecipeBook().removeRecipe(oldRecipe);
                 // add new recipe to recipe book
-                Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, false, categories);
+                Recipe newRecipe = Recipe(recipeName, int.parse(portionSize), ingredients, categories);
                 widget.userData.getRecipeBook().addRecipe(newRecipe);
                 await widget.userData.saveUserData();
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(existingIngredients: widget.existingIngredients, userData: widget.userData, pageCount: 0)));

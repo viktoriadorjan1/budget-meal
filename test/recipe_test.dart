@@ -16,7 +16,7 @@ void main() {
 
   test('recipe book with one recipe returns singular list for getRecipes', () {
     RecipeBook recipeBook = RecipeBook();
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
 
     recipeBook.addRecipe(cerealRecipe);
 
@@ -27,7 +27,7 @@ void main() {
 
   test('recipe book with one-category-recipe returns singular list for getCategories', () {
     RecipeBook recipeBook = RecipeBook();
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
 
     recipeBook.addRecipe(cerealRecipe);
 
@@ -37,7 +37,7 @@ void main() {
 
   test('recipe book with multi-category-recipe returns multi-list for getCategories', () {
     RecipeBook recipeBook = RecipeBook();
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast", "lunch"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast", "lunch"]);
 
     recipeBook.addRecipe(cerealRecipe);
 
@@ -46,7 +46,7 @@ void main() {
   });
 
   test('recipe with breakfast category returns breakfast category for getCategory', () {
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
 
     assert (cerealRecipe.getCategories().length == 1);
     assert (cerealRecipe.getCategories().contains("breakfast"));
@@ -56,8 +56,8 @@ void main() {
   test('two recipes with the same category returns a singular list for getCategories', () {
     RecipeBook recipeBook = RecipeBook();
 
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
-    Recipe sandwichRecipe = Recipe("Sandwich", 1, [], false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
+    Recipe sandwichRecipe = Recipe("Sandwich", 1, [], ["breakfast"]);
 
     recipeBook.addRecipe(cerealRecipe);
     recipeBook.addRecipe(sandwichRecipe);
@@ -70,8 +70,8 @@ void main() {
   test('two recipes with the different categories returns a list length of two for getCategories', () {
     RecipeBook recipeBook = RecipeBook();
 
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
-    Recipe sandwichRecipe = Recipe("Sandwich", 1, [], false, ["lunch"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
+    Recipe sandwichRecipe = Recipe("Sandwich", 1, [], ["lunch"]);
 
     recipeBook.addRecipe(cerealRecipe);
     recipeBook.addRecipe(sandwichRecipe);
@@ -91,7 +91,7 @@ void main() {
 
   test('recipe book with one recipe returns correct list when searched by category', () {
     RecipeBook recipeBook = RecipeBook();
-    Recipe cerealRecipe = Recipe("Cereal", 1, [], false, ["breakfast"]);
+    Recipe cerealRecipe = Recipe("Cereal", 1, [], ["breakfast"]);
 
     recipeBook.addRecipe(cerealRecipe);
 
