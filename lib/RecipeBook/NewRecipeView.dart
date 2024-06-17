@@ -197,7 +197,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     List<String> units = ['grams', 'ml', 'pieces', 'slices', 'whole', 'tbsp', 'tsp', 'block'];
     List<String> existingIngredientNames = [];
     existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
-      return i.getIngredientName();
+      return i.getIngredientTag();
     }));
 
 
@@ -291,7 +291,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     setState(() {});
                     if (_ingredientKey.currentState!.validate()) {
                       if (editIngredientTile != null) {
-                        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
+                        Ingredient i = IngredientBuilder().withIngredientTag(ingredientName).withAmount(int.parse(ingredientAmount), ingredientUnit).build();
                         ingredients.add(i);
                       }
                       _ingredientKey.currentState?.reset();
@@ -348,7 +348,7 @@ class _InsertIngredientsState extends State<InsertIngredients> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IngredientTile(i.getIngredientName(), i.getQuantity().toString(), i.getUnit()),
+          IngredientTile(i.getIngredientTag(), i.getQuantity().toString(), i.getUnit()),
           IconButton(
               onPressed: () {
                 widget.ingredients.remove(i);

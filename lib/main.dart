@@ -331,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
       RecipeBookView(existingIngredients: widget.existingIngredients, userData: widget.userData,),
       PantryView(existingIngredients: widget.existingIngredients, userData: widget.userData),
       Schedule(existingIngredients: widget.existingIngredients, userData: widget.userData),
-      ShoppingListPage(userData: widget.userData,),
+      ShoppingListPage(userData: widget.userData),
       More(widget.userData, widget.existingIngredients, context)
     ];
 

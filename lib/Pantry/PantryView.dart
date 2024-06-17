@@ -54,7 +54,7 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
     }
     // map all categories to null initially
     Map<String, Widget?> cat = {
-      for (Ingredient i in widget.existingIngredients) i.getIngredientName() : null
+      for (Ingredient i in widget.existingIngredients) i.getIngredientTag() : null
     };
     List<Widget> tiles = [];
     for (var c in categories) {
@@ -90,7 +90,7 @@ class _CreateCategoryTilesState extends State<CreateCategoryTiles>{
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              IngredientTile(i.getIngredientName(), i.getQuantity().toString(), i.getUnit()),
+              IngredientTile(i.getIngredientTag(), i.getQuantity().toString(), i.getUnit()),
               IconButton(
                   onPressed: () async {
                     widget.userData.getPantry().removeFromPantry(i);
@@ -168,7 +168,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
     List<String> existingIngredientNames = [];
     existingIngredientNames.addAll(existingIngredients.map((Ingredient i) {
       if (i.getCategory() == category) {
-        return i.getIngredientName();
+        return i.getIngredientTag();
       }
       return "";
     }));
@@ -269,7 +269,7 @@ class _GenerateEditIngredientFormState extends State<GenerateEditIngredientForm>
                   onPressed: () async {
                     setState(() {});
                     if (pantryItemKey.currentState!.validate()) {
-                      Ingredient i = IngredientBuilder().withIngredientName(
+                      Ingredient i = IngredientBuilder().withIngredientTag(
                           widget.ingredientName).withAmount(
                           int.parse(widget.ingredientAmount),
                           widget.ingredientUnit)

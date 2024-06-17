@@ -226,6 +226,9 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
     }
 
     ShoppingList shoppingList = generateShoppingList(jsonResults);
+    //ShoppingList shoppingList = ShoppingList();
+
+    //print(jsonResults);
 
     return Center(
       child: Column(
@@ -264,7 +267,22 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   List<Widget> createDayTiles(List<String> days, Map<String, dynamic> results) {
     List<Widget> dayTileList = <Widget>[];
 
+    //print(results["schedule"]);
+
+    //Map<String, dynamic> schedules = jsonDecode(results["schedule"]);
     List<dynamic> schedules = results["schedule"];
+
+    /*schedules.forEach((key, value) {
+      String day = key;
+      print("$key : $value");
+      List<Widget> mealTileList = <Widget>[];
+      //for (dynamic v in value) {
+      //  print(v);
+      //}
+
+      //Widget mealTile = DaySchedule(meal: meal, recipeName: recipe, userData: widget.userData);
+      //mealTileList.add(mealTile);
+    });*/
 
     for (String day in days) {
       List<Widget> mealTileList = <Widget>[];
@@ -275,7 +293,7 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
           //String day = schedule[1];
           String meal = schedule[2];
 
-          Widget mealTile = daySchedule(meal, recipe);
+          Widget mealTile = DaySchedule(meal: meal, recipeName: recipe, userData: widget.userData);
           mealTileList.add(mealTile);
         }
       }
@@ -297,15 +315,32 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
     );
   }
 
+  /*
   Widget daySchedule(String meal, String recipe) {
+    IconData iconData = Icons.circle_outlined;
     return Row(
         children: [
           Text(meal),
           const Text(" : "),
-          Text(recipe)
+          Text(recipe),
+          IconButton(
+              onPressed: () {
+                if (iconData == Icons.circle_outlined) {
+                  setState(() {
+                    iconData = Icons.check_circle_outline;
+                  });
+                } else {
+                  setState(() {
+                    iconData = Icons.circle_outlined;
+                  });
+                }
+              },
+              icon: Icon(iconData)
+          )
         ]
     );
   }
+  */
 
   getMealSelectionItems(mealOptions) {
     List<MultiSelectItem> items = [];
@@ -318,11 +353,33 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   ShoppingList generateShoppingList(Map<String, dynamic> jsonResults) {
     //print("Generating shopping list...");
 
-    if (jsonResults["buy"] == null) return ShoppingList();
+    if (jsonResults["buy"] == null) {
+      return ShoppingList();
+    }
+
+    //Map<String, dynamic> buyList = jsonDecode(jsonResults["buy"]);
 
     List<dynamic> buyList = jsonResults["buy"];
+    List<dynamic> webItemsList = jsonResults["i_costs"];
+    List<dynamic> unitMapList = jsonResults["i_unit"];
 
     ShoppingList shoppingList = ShoppingList();
+    /*buyList.forEach((key, value) {
+      String ingredientTag = key;
+      int amount = value["amount"];
+      String category = value["category"];
+      String ingredientName = value["ingredientName"];
+      int price = value["price"];
+      String recipeName = value["recipe"];
+      String storeName = value["store"];
+      int weight = value["weight"];
+      // TODO: unit
+      print("$key : $value");
+      NutritionalInformation n = NutritionalInformation(Fats(0,0), Saturates(0,0), Carbs(0,0), Sugars(0,0), Protein(0,0), Salt(0,0));
+      ShoppingListItem item = ShoppingListItem(recipeName, ingredientTag, amount, storeName, price, ingredientName, weight, "g", category, n, false);
+      shoppingList.addItem(item);
+    });*/
+
     for (List<dynamic> buyItem in buyList) {
       String recipeName = buyItem[0];
       String ingredientTag = buyItem[1];
@@ -331,13 +388,87 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
       String ingredientName = buyItem[4];
       int price = int.parse(buyItem[5]);
 
+      int quantity = 0;
+      for (List<dynamic> webItem in webItemsList) {
+        if (webItem[1] == ingredientName) {
+          quantity = int.parse(webItem[3]);
+          break;
+        }
+      }
 
-      //print("Added shopping list item $ingredientTag");
-      ShoppingListItem item = ShoppingListItem(recipeName, ingredientTag, amount, "Aldi", price, ingredientName);
+      String unit = "ERROR";
+      for (List<dynamic> unitMap in unitMapList) {
+        if (unitMap[0] == ingredientName) {
+          unit = unitMap[1];
+          break;
+        }
+      }
+
+      // TODO: category, nutrition
+      String category = "vegetables";
+      NutritionalInformation n = NutritionalInformation(Fats(0,0), Saturates(0,0), Carbs(0,0), Sugars(0,0), Protein(0,0), Salt(0,0));
+      ShoppingListItem item = ShoppingListItem(recipeName, ingredientTag, amount, "Aldi", price, ingredientName, quantity, unit, category, n, false);
       shoppingList.addItem(item);
     }
 
     return shoppingList;
 
   }
+}
+
+class DaySchedule extends StatefulWidget {
+  final UserData userData;
+  final String meal;
+  final String recipeName;
+  //final bool isChecked;
+
+  const DaySchedule({super.key, required this.meal, required this.recipeName, required this.userData});
+
+  @override
+  State<DaySchedule> createState() => _DayScheduleState();
+}
+
+class _DayScheduleState extends State<DaySchedule> {
+  IconData iconData = Icons.circle_outlined;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        children: [
+          Text(widget.meal),
+          const Text(" : "),
+          Text(widget.recipeName),
+          IconButton(
+              onPressed: () {
+                if (iconData == Icons.circle_outlined) {
+                  // if it was unchecked, now checked.
+                  setState(() {
+                    iconData = Icons.check_circle_outline;
+                  });
+                  // use ingredients from pantry.
+                  for (Ingredient i in widget.userData.getRecipeBook().getRecipe(widget.recipeName)!.getIngredients()) {
+                    // TODO: handle case when not all ingredients are present anymore i.e. recipe cooking should be atomic
+                    // TODO: consider serving size
+                    print("Using ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
+                    widget.userData.getPantry().useGenericFromPantry(i.getIngredientTag(), i.getQuantity(), i.getUnit());
+                  }
+                } else {
+                  setState(() {
+                    iconData = Icons.circle_outlined;
+                  });
+                  // put ingredients back to pantry.
+                  for (Ingredient i in widget.userData.getRecipeBook().getRecipe(widget.recipeName)!.getIngredients()) {
+                    // TODO: consider serving size
+                    print("Adding back ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
+                    widget.userData.getPantry().putInPantry(i);
+                  }
+                }
+                //widget.userData.saveUserData();
+              },
+              icon: Icon(iconData)
+          )
+        ]
+    );
+  }
+
 }

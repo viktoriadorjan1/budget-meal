@@ -58,7 +58,7 @@ class RecipeBook {
         "portions": r.getPortionSize(),
         "needed_ingredients": [
           for (Ingredient i in r.getIngredients()) {
-            "ingredientName": i.getIngredientName(normalised: true),
+            "ingredientName": i.getIngredientTag(normalised: true),
             "ingredientQuantity": i.getQuantity(),
             "ingredientUnit": i.getUnit()
           }
@@ -76,6 +76,15 @@ class RecipeBook {
       }
     }
     return false;
+  }
+
+  Recipe? getRecipe(String recipeName) {
+    for (Recipe r in _recipes) {
+      if (r.getRecipeName() == recipeName) {
+        return r;
+      }
+    }
+    return null;
   }
 }
 

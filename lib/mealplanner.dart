@@ -40,13 +40,17 @@ class MealPlanner {
         if (!ingredientsFromRecipes.contains(ingredient)) {
           ingredientsFromRecipes.add(ingredient);
         }
-        if (!ingredientNames.contains(ingredient.getIngredientName(normalised: true))) {
-          ingredientNames.add(ingredient.getIngredientName(normalised: true));
+        if (!ingredientNames.contains(ingredient.getIngredientTag(normalised: true))) {
+          ingredientNames.add(ingredient.getIngredientTag(normalised: true));
         }
       }
     }
 
-    //print("Relevant ingredients DONE");
+    for (Ingredient i in userData.getPantry().getPantryItems()) {
+      print("${i.getIngredientTag()} : ${i.getQuantity()}");
+    }
+
+    print("Relevant ingredients DONE");
 
     Map<String, dynamic> generateJson() => {
       "day": [for (String d in days) d],
@@ -58,7 +62,7 @@ class MealPlanner {
       "recipe": relevantRecipeBookForMeals.getRecipeNames(normalised: true),
       "pantry_item": {
         // only consider pantry items that are needed for the relevant recipes
-        for (Ingredient i in ingredientsFromRecipes) if (userData.getPantry().contains(i) == null) i.getIngredientName(normalised: true) : [0, "grams"] else userData.getPantry().contains(i)?.getIngredientName(normalised: true) : [userData.getPantry().contains(i)?.getQuantity().round(), userData.getPantry().contains(i)?.getUnit()],
+        for (Ingredient i in ingredientsFromRecipes) if (userData.getPantry().contains(i) == null) i.getIngredientTag(normalised: true) : [0, "grams"] else userData.getPantry().contains(i)?.getIngredientTag(normalised: true) : [userData.getPantry().contains(i)?.getQuantity().round(), userData.getPantry().contains(i)?.getUnit()],
         //for (Ingredient i in userData.getPantry().getPantryItems()) i.getIngredientName(normalised: true) : [i.getQuantity().round(), i.getUnit()]
       },
       "nutrient_needed": {
@@ -81,7 +85,7 @@ class MealPlanner {
       ],*/
       "needs": {
         for (Recipe r in relevantRecipeBookForMeals.getRecipes()) r.getRecipeName(normalised: true): {
-          for (Ingredient i in r.getIngredients()) i.getIngredientName(normalised: true) : [i.getQuantity() / r.getPortionSize(), i.getUnit()]
+          for (Ingredient i in r.getIngredients()) i.getIngredientTag(normalised: true) : [i.getQuantity() / r.getPortionSize(), i.getUnit()]
         }
       }
     };
@@ -110,11 +114,11 @@ class MealPlanner {
     Pantry testPantry = Pantry();
 
     // 200 ml milk stored in fridge
-    Ingredient ownMilk = IngredientBuilder().withIngredientName("milk").withAmount(200, 'ml').inStorage('fridge').build();
+    Ingredient ownMilk = IngredientBuilder().withIngredientTag("milk").withAmount(200, 'ml').inStorage('fridge').build();
     // 400 g of cereal flakes
-    Ingredient ownCereal = IngredientBuilder().withIngredientName("cereal flakes").withAmount(400, 'g').build();
+    Ingredient ownCereal = IngredientBuilder().withIngredientTag("cereal flakes").withAmount(400, 'g').build();
     // 100g bread in the cupboard
-    Ingredient ownBread = IngredientBuilder().withIngredientName("bread").withAmount(100, 'g').inStorage('cupboard').build();
+    Ingredient ownBread = IngredientBuilder().withIngredientTag("bread").withAmount(100, 'g').inStorage('cupboard').build();
 
     testPantry.putInPantry(ownMilk);
     testPantry.putInPantry(ownCereal);
@@ -128,8 +132,8 @@ class MealPlanner {
     RecipeBook testRecipeBook = RecipeBook();
 
     // cereal recipe
-    Ingredient milk = IngredientBuilder().withIngredientName("milk").withAmount(300, 'ml').build();
-    Ingredient cerealFlakes = IngredientBuilder().withIngredientName("cereal flakes").withAmount(300, 'g').build();
+    Ingredient milk = IngredientBuilder().withIngredientTag("milk").withAmount(300, 'ml').build();
+    Ingredient cerealFlakes = IngredientBuilder().withIngredientTag("cereal flakes").withAmount(300, 'g').build();
 
     List<Ingredient> ceIngredients = [];
     ceIngredients.add(milk);
@@ -138,7 +142,7 @@ class MealPlanner {
     Recipe cerealRecipe = Recipe("cereal", 1, ceIngredients, ["breakfast"]);
 
     // sandwich recipe
-    Ingredient bread = IngredientBuilder().withIngredientName("bread").withAmount(200, 'g').build();
+    Ingredient bread = IngredientBuilder().withIngredientTag("bread").withAmount(200, 'g').build();
 
     List<Ingredient> saIngredients = [];
     saIngredients.add(bread);
@@ -154,9 +158,9 @@ class MealPlanner {
   WebShop generateWebShop() {
     WebShop testWebShop = WebShop();
 
-    Ingredient shopMilk = IngredientBuilder().withIngredientName("milk").withAmount(100, 'g').withTotalPrice(2.00).build();
-    Ingredient shopBread = IngredientBuilder().withIngredientName("bread").withAmount(1000, 'g').withTotalPrice(1.00).build();
-    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientName("cereal").withAmount(400, 'g').withTotalPrice(4.00).build();
+    Ingredient shopMilk = IngredientBuilder().withIngredientTag("milk").withAmount(100, 'g').withTotalPrice(2.00).build();
+    Ingredient shopBread = IngredientBuilder().withIngredientTag("bread").withAmount(1000, 'g').withTotalPrice(1.00).build();
+    Ingredient shopCerealFlakes = IngredientBuilder().withIngredientTag("cereal").withAmount(400, 'g').withTotalPrice(4.00).build();
 
     testWebShop.addWebShopItem(shopMilk);
     testWebShop.addWebShopItem(shopBread);

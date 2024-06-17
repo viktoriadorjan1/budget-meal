@@ -48,7 +48,7 @@ class IngredientCatalog {
     final Map<String, dynamic> parsedJson = jsonDecode(jsonBody);
     for (String category in parsedJson.keys) {
       for (String ingredientName in parsedJson[category]) {
-          Ingredient i = IngredientBuilder().withCategory(category).withIngredientName(ingredientName).build();
+          Ingredient i = IngredientBuilder().withCategory(category).withIngredientTag(ingredientName).build();
           ingredients.add(i);
       }
     }
@@ -60,7 +60,7 @@ class IngredientCatalog {
     print("Fetching ingredients...");
     List<String> ingredientNames = [];
     for (Ingredient i in _ingredientCatalog) {
-      ingredientNames.add(i.getIngredientName());
+      ingredientNames.add(i.getIngredientTag());
     }
     return ingredientNames;
   }

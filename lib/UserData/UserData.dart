@@ -86,7 +86,15 @@ class UserData {
       String storeName = entry["storeName"];
       int price = entry["price"];
       String ingredientName = entry["ingredientName"];
-      ShoppingListItem i = ShoppingListItem(intendedRecipeName, ingredientTag, amountToBuy, storeName, price, ingredientName);
+      bool isTicked = entry["isTicked"] ?? false;
+
+      int quantity = entry["quantity"];
+      String unit = entry["unit"];
+      String category = entry["category"];
+      print("$ingredientTag with $quantity $unit and $category is parsed.");
+      // TODO: QUANTITY, UNIT, CATEGORY, NUTRITION
+      NutritionalInformation n = NutritionalInformation(Fats(0, 0), Saturates(0,0), Carbs(0,0), Sugars(0,0), Protein(0,0), Salt(0,0));
+      ShoppingListItem i = ShoppingListItem(intendedRecipeName, ingredientTag, amountToBuy, storeName, price, ingredientName, quantity, unit, category, n, isTicked);
       shoppingList.addItem(i);
     }
     return shoppingList;
@@ -96,7 +104,7 @@ class UserData {
     List<Ingredient> unwantedIngs = [];
     for (String category in parsedJson.keys) {
       for (String ingredientName in parsedJson[category]) {
-        Ingredient i = IngredientBuilder().withCategory(category).withIngredientName(ingredientName).build();
+        Ingredient i = IngredientBuilder().withCategory(category).withIngredientTag(ingredientName).build();
         unwantedIngs.add(i);
       }
     }
@@ -168,7 +176,7 @@ class UserData {
       int ingredientQuantity = entry["ingredientQuantity"];
       String ingredientUnit = entry["ingredientUnit"];
       String ingredientCategory = entry["ingredientCategory"];
-      Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).withCategory(ingredientCategory).build();
+      Ingredient i = IngredientBuilder().withIngredientTag(ingredientName).withAmount(ingredientQuantity, ingredientUnit).withCategory(ingredientCategory).build();
       pantry.putInPantry(i);
     }
     return pantry;
@@ -186,7 +194,7 @@ class UserData {
         String ingredientName = needed_ing["ingredientName"].toString().replaceAll("_", " ");
         int ingredientQuantity = needed_ing["ingredientQuantity"];
         String ingredientUnit = needed_ing["ingredientUnit"];
-        Ingredient i = IngredientBuilder().withIngredientName(ingredientName).withAmount(ingredientQuantity, ingredientUnit).build();
+        Ingredient i = IngredientBuilder().withIngredientTag(ingredientName).withAmount(ingredientQuantity, ingredientUnit).build();
         ingredients.add(i);
       }
       Recipe r = Recipe(recipeName, portions, ingredients, categories);

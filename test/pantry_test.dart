@@ -2,9 +2,9 @@ import 'package:budget_meal/Pantry/PantryModel.dart';
 import 'package:budget_meal/RecipeBook/IngredientModel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Ingredient egg = IngredientBuilder().withIngredientName("egg").withTotalPrice(1.5).withAmount(6, 'pieces').build();
-Ingredient tomato = IngredientBuilder().withIngredientName("tomato").build();
-Ingredient mushroom = IngredientBuilder().withIngredientName("mushroom").withAmount(300, 'grams').build();
+Ingredient egg = IngredientBuilder().withIngredientTag("egg").withIngredientName("egg").withTotalPrice(1.5).withAmount(6, 'pieces').build();
+Ingredient tomato = IngredientBuilder().withIngredientTag("tomato").withIngredientName("tomato").build();
+Ingredient mushroom = IngredientBuilder().withIngredientTag("mushroom").withIngredientName("mushroom").withAmount(300, 'grams').build();
 
 void main() {
   test('putInPantry puts item to pantry', () {
@@ -25,7 +25,7 @@ void main() {
   test('putInPantry deletes price of ingredient', () {
     Pantry pantry = Pantry();
 
-    Ingredient bacon = IngredientBuilder().withIngredientName("bacon").withTotalPrice(1.5).withAmount(6, 'pieces').build();
+    Ingredient bacon = IngredientBuilder().withIngredientTag("bacon").withTotalPrice(1.5).withAmount(6, 'pieces').build();
 
     assert (pantry.length() == 0);
     assert (bacon.getTotalPrice() == 1.5);
@@ -54,7 +54,7 @@ void main() {
 
     assert (pantry.length() == 1);
 
-    Ingredient otherEgg = IngredientBuilder().withIngredientName("egg").withTotalPrice(5).build();
+    Ingredient otherEgg = IngredientBuilder().withIngredientTag("egg").withTotalPrice(5).build();
     expect(() => pantry.removeFromPantry(otherEgg), throwsA("Pantry does not contain this ingredient"));
 
     assert (pantry.length() == 1);
@@ -75,7 +75,7 @@ void main() {
 
   test('useFromPantry throws error for empty pantry', () {
     Pantry pantry = Pantry();
-    expect (() => pantry.useFromPantry(egg, 1, "piece"), throwsA("Pantry does not contain this ingredient"));
+    expect (() => pantry.useFromPantry("egg", 1, "piece"), throwsA("Pantry does not contain this ingredient"));
     assert (pantry.length() == 0);
   });
 
@@ -85,7 +85,7 @@ void main() {
 
     assert (pantry.length() == 1);
 
-    expect (() => pantry.useFromPantry(egg, 1, "piece"), throwsA("Pantry does not contain this ingredient"));
+    expect (() => pantry.useFromPantry("egg", 1, "piece"), throwsA("Pantry does not contain this ingredient"));
 
     assert (pantry.length() == 1);
 
@@ -97,7 +97,7 @@ void main() {
 
     assert (pantry.length() == 1);
 
-    expect (() => pantry.useFromPantry(tomato, 1, "piece"), throwsA("The amount of this ingredient is Unknown"));
+    expect (() => pantry.useFromPantry("tomato", 1, "piece"), throwsA("The amount of this ingredient is Unknown"));
 
     assert (pantry.length() == 1);
   });
@@ -109,7 +109,7 @@ void main() {
     assert (pantry.length() == 1);
     assert (mushroom.getQuantity() == 300);
 
-    expect (() => pantry.useFromPantry(mushroom, 400, "grams"), throwsA("Pantry does not have enough of this ingredient"));
+    expect (() => pantry.useFromPantry("mushroom", 400, "grams"), throwsA("Pantry does not have enough of this ingredient"));
 
     assert (pantry.length() == 1);
     assert (mushroom.getQuantity() == 300);
@@ -138,7 +138,7 @@ void main() {
     assert (mushroom.getQuantity() == 300);
     assert (mushroom.getUnit() == 'grams');
 
-    pantry.useFromPantry(mushroom, 250, 'grams');
+    pantry.useFromPantry("mushroom", 250, 'grams');
     assert (pantry.length() == 1);
     assert (mushroom.getQuantity() == 50);
     assert (mushroom.getUnit() == 'grams');
@@ -150,14 +150,14 @@ void main() {
 
     assert (pantry.length() == 0);
 
-    Ingredient cucumber = IngredientBuilder().withIngredientName("cucumber").withAmount(300, 'grams').build();
+    Ingredient cucumber = IngredientBuilder().withIngredientTag("cucumber").withIngredientName("cucumber").withAmount(300, 'grams').build();
 
     pantry.putInPantry(cucumber);
     assert (pantry.length() == 1);
     assert (cucumber.getQuantity() == 300);
     assert (cucumber.getUnit() == 'grams');
 
-    pantry.useFromPantry(cucumber, 300, 'grams');
+    pantry.useFromPantry("cucumber", 300, 'grams');
     assert (pantry.length() == 0);
     assert (cucumber.getQuantity() == 0);
     assert (cucumber.getUnit() == 'grams');
@@ -186,12 +186,12 @@ void main() {
   });
 
   test('getCategory returns other for undefined category', () {
-    Ingredient milk = IngredientBuilder().withIngredientName("milk").build();
+    Ingredient milk = IngredientBuilder().withIngredientTag("milk").build();
     assert (milk.getCategory() == "other");
   });
 
   test('getCategory returns correct category for defined category', () {
-    Ingredient milk = IngredientBuilder().withIngredientName("milk").withCategory("dairy").build();
+    Ingredient milk = IngredientBuilder().withIngredientTag("milk").withCategory("dairy").build();
     assert (milk.getCategory() == "dairy");
   });
 
@@ -208,13 +208,13 @@ void main() {
 
     pantry.putInPantry(mushroom);
     assert (pantry.getItemsWithCategory("other").isNotEmpty);
-    assert (pantry.getItemsWithCategory("other").first.getIngredientName() == "mushroom");
+    assert (pantry.getItemsWithCategory("other").first.getIngredientTag() == "mushroom");
 
-    Ingredient milk = IngredientBuilder().withIngredientName("milk").withCategory("dairy").build();
+    Ingredient milk = IngredientBuilder().withIngredientTag("milk").withCategory("dairy").build();
     pantry.putInPantry(milk);
 
     assert (pantry.getItemsWithCategory("dairy").isNotEmpty);
-    assert (pantry.getItemsWithCategory("dairy").first.getIngredientName() == "milk");
+    assert (pantry.getItemsWithCategory("dairy").first.getIngredientTag() == "milk");
   });
 
 }

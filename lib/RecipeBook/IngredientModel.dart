@@ -4,6 +4,7 @@ import '../WebStore/mongoData.dart';
 
 class Ingredient {
   String _storeName = "";
+  String _ingredientTag = "";
   String _ingredientName = "";
   String _category = "other";
   int _quantity = 0;
@@ -16,6 +17,7 @@ class Ingredient {
 
   Ingredient(IngredientBuilder builder) {
     _storeName = builder._storeName;
+    _ingredientTag = builder._ingredientTag;
     _ingredientName = builder._ingredientName;
     _category = builder._category;
     _quantity = builder._quantity;
@@ -48,9 +50,9 @@ class Ingredient {
     }
   }*/
 
-  String getIngredientName({bool? normalised}) {
-    if (normalised == null || !normalised) return _ingredientName;
-    return _ingredientName.replaceAll(' ', '_').toLowerCase();
+  String getIngredientTag({bool? normalised}) {
+    if (normalised == null || !normalised) return _ingredientTag;
+    return _ingredientTag.replaceAll(' ', '_').toLowerCase();
   }
 
   void updateQuantity(int newQuantity) {
@@ -65,6 +67,10 @@ class Ingredient {
     return _category;
   }
 
+  String getIngredientName() {
+    return _ingredientName;
+  }
+
   void buy() {
     //_perUnitPrice = 0;
     _totalPrice = 0;
@@ -74,6 +80,7 @@ class Ingredient {
 
 class IngredientBuilder {
   String _storeName = "";
+  String _ingredientTag = "";
   String _ingredientName = "";
   String _category = "other";
   int _quantity = 0;
@@ -97,8 +104,8 @@ class IngredientBuilder {
     return this;
   }
 
-  IngredientBuilder withIngredientName(String ingredientName) {
-    _ingredientName = ingredientName;
+  IngredientBuilder withIngredientTag(String ingredientTag) {
+    _ingredientTag = ingredientTag;
     return this;
   }
 
@@ -130,6 +137,11 @@ class IngredientBuilder {
 
   IngredientBuilder withExpiry(ExpiryInformation expiryInfo) {
     _expiryInfo = expiryInfo;
+    return this;
+  }
+
+  withIngredientName(String ingredientName) {
+    _ingredientName = ingredientName;
     return this;
   }
 
