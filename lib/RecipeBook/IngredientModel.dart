@@ -76,6 +76,10 @@ class Ingredient {
     _totalPrice = 0;
   }
 
+  Ingredient copy() {
+    return IngredientBuilder().withIngredientTag(_ingredientTag).withIngredientName(_ingredientName).withTotalPrice(_totalPrice).withNutritionalInfo(_nutritionalInfo!).withCategory(_category).withAmount(_quantity, _unit).withExpiry(_expiryInfo).build();
+  }
+
 }
 
 class IngredientBuilder {
@@ -140,7 +144,7 @@ class IngredientBuilder {
     return this;
   }
 
-  withIngredientName(String ingredientName) {
+  IngredientBuilder withIngredientName(String ingredientName) {
     _ingredientName = ingredientName;
     return this;
   }

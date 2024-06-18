@@ -430,6 +430,7 @@ class DaySchedule extends StatefulWidget {
 
 class _DayScheduleState extends State<DaySchedule> {
   IconData iconData = Icons.circle_outlined;
+  List<Ingredient> usedIngredients = [];
 
   @override
   Widget build(BuildContext context) {
@@ -449,17 +450,26 @@ class _DayScheduleState extends State<DaySchedule> {
                   for (Ingredient i in widget.userData.getRecipeBook().getRecipe(widget.recipeName)!.getIngredients()) {
                     // TODO: handle case when not all ingredients are present anymore i.e. recipe cooking should be atomic
                     // TODO: consider serving size
-                    print("Using ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
-                    widget.userData.getPantry().useGenericFromPantry(i.getIngredientTag(), i.getQuantity(), i.getUnit());
+                    // print("USING ${i.getIngredientTag()}, ${i.getCategory()} with ${i.getQuantity()}");
+                    try {
+                      Ingredient used = widget.userData.getPantry().useGenericFromPantry(i.getIngredientTag(), i.getQuantity(), i.getUnit());
+                      used.updateQuantity(i.getQuantity());
+                      usedIngredients.add(used);
+                    } catch (e) {
+                      print("ERROR: Pantry does not contain this ingredient");
+                    }
+
                   }
                 } else {
                   setState(() {
                     iconData = Icons.circle_outlined;
                   });
                   // put ingredients back to pantry.
-                  for (Ingredient i in widget.userData.getRecipeBook().getRecipe(widget.recipeName)!.getIngredients()) {
+                  for (Ingredient i in usedIngredients) {
                     // TODO: consider serving size
-                    print("Adding back ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
+                    // TODO: categories
+                    //i.setCategory("vegetables");
+                    //print("Adding back ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
                     widget.userData.getPantry().putInPantry(i);
                   }
                 }
