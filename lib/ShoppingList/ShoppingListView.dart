@@ -90,35 +90,6 @@ class _ShoppingListItemTilesState extends State<ShoppingListItemTiles>{
 
     return shoppingListItemTiles;
   }
-
-  /*
-  Widget ShoppingListItemTile(String ingredientTag, int amountToBuy, String storeName, int price, String intendedRecipeName, String ingredientName) {
-    IconData iconData = Icons.circle_outlined;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text("buy $ingredientTag : "),
-        Text("$amountToBuy x $ingredientName ($storeName), £${price / 100} (for $intendedRecipeName)"),
-        IconButton(
-            onPressed: () {
-              setState(() {
-                if (iconData == Icons.circle_outlined) {
-                  iconData = Icons.check_circle_outline;
-                  print("tick");
-                } else {
-                  iconData = Icons.circle_outlined;
-                  print("untick");
-                }
-              });
-            },
-            icon: Icon(iconData)
-        )
-      ],
-    );
-  }
-   */
-
 }
 
 class ShoppingListItemTile extends StatefulWidget {
@@ -172,7 +143,6 @@ class _ShoppingListItemTileState extends State<ShoppingListItemTile>{
                 try {
                   widget.userData.getPantry().useFromPantry(ingredientName, quantity, unit);
                 } catch (e) {
-                  print(e);
                   // The pantry item is already used. Still unchecks the box, you can buy it again.
                 }
               }

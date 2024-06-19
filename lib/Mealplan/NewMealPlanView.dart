@@ -42,7 +42,6 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.plan != null && results == null) {
-      //print("Editing ${widget.plan?.name} with ${widget.plan?.startDate} - ${widget.plan?.endDate}");
       startDate = widget.plan?.startDate;
       endDate = widget.plan?.endDate;
       results = jsonEncode(widget.plan!.plan);
@@ -226,9 +225,6 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
     }
 
     ShoppingList shoppingList = generateShoppingList(jsonResults);
-    //ShoppingList shoppingList = ShoppingList();
-
-    //print(jsonResults);
 
     return Center(
       child: Column(
@@ -249,7 +245,6 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
                 // SAVING SHOPPING LIST
                 // replace (or create) shopping list
                 widget.userData.setShoppingList(shoppingList);
-                //print("Set shopping list");
 
                 // SAVING...
                 await widget.userData.saveUserData();
@@ -266,8 +261,6 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
 
   List<Widget> createDayTiles(List<String> days, Map<String, dynamic> results) {
     List<Widget> dayTileList = <Widget>[];
-
-    //print(results["schedule"]);
 
     //Map<String, dynamic> schedules = jsonDecode(results["schedule"]);
     List<dynamic> schedules = results["schedule"];
@@ -351,8 +344,6 @@ class _NewMealPlanPageState extends State<NewMealPlanPage> {
   }
 
   ShoppingList generateShoppingList(Map<String, dynamic> jsonResults) {
-    //print("Generating shopping list...");
-
     if (jsonResults["buy"] == null) {
       return ShoppingList();
     }
@@ -450,13 +441,12 @@ class _DayScheduleState extends State<DaySchedule> {
                   for (Ingredient i in widget.userData.getRecipeBook().getRecipe(widget.recipeName)!.getIngredients()) {
                     // TODO: handle case when not all ingredients are present anymore i.e. recipe cooking should be atomic
                     // TODO: consider serving size
-                    // print("USING ${i.getIngredientTag()}, ${i.getCategory()} with ${i.getQuantity()}");
                     try {
                       Ingredient used = widget.userData.getPantry().useGenericFromPantry(i.getIngredientTag(), i.getQuantity(), i.getUnit());
                       used.updateQuantity(i.getQuantity());
                       usedIngredients.add(used);
                     } catch (e) {
-                      print("ERROR: Pantry does not contain this ingredient");
+                      // Pantry does not contain this ingredient");
                     }
 
                   }
@@ -468,8 +458,6 @@ class _DayScheduleState extends State<DaySchedule> {
                   for (Ingredient i in usedIngredients) {
                     // TODO: consider serving size
                     // TODO: categories
-                    //i.setCategory("vegetables");
-                    //print("Adding back ${i.getIngredientTag()}, ${i.getIngredientName()}, ${i.getCategory()} with ${i.getQuantity()}");
                     widget.userData.getPantry().putInPantry(i);
                   }
                 }

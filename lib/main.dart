@@ -21,7 +21,6 @@ Future<void> main() async {
   UserData userData = UserData();
   bool userExists = await userData.init();
 
-  print("Finished loading. Running app...");
   runApp(MyApp(existingIngredients: existingIngredients, userExists: userExists, userData: userData));
 }
 

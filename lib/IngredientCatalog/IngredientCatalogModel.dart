@@ -57,7 +57,6 @@ class IngredientCatalog {
 
 
   List<String> getAllIngredientNames() {
-    print("Fetching ingredients...");
     List<String> ingredientNames = [];
     for (Ingredient i in _ingredientCatalog) {
       ingredientNames.add(i.getIngredientTag());
@@ -66,7 +65,6 @@ class IngredientCatalog {
   }
 
   List<Ingredient> getAllIngredients() {
-    print("Fetching ingredients...");
     List<Ingredient> ingredients = [];
     for (Ingredient i in _ingredientCatalog) {
       ingredients.add(i);

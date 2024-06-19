@@ -230,8 +230,6 @@ class NutritionalInformation {
       }
     };
 
-    print(jsonEncode(generateJson()));
-
     return jsonEncode(generateJson());
   }
 }

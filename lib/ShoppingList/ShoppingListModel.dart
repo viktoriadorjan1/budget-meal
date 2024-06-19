@@ -25,7 +25,7 @@ class ShoppingList {
         "isTicked": i.getIsTicked()
       }
     };
-    //print("Shopping list to JSON: ${jsonEncode(generateJson())}");
+
     return jsonEncode(generateJson());
   }
 

@@ -12,24 +12,18 @@ class MealPlanner {
   // and a recipe book (all recipes owned by user),
   // create a meal plan.
   String createMealPlan(UserData userData, List<String> days, List<dynamic> meals) {
-    //print("createMealPlan...");
     // Only considering relevant recipes based on the schedulable meals
     // e.g. do not include lunch recipes if we wish to schedule breakfast only
     RecipeBook relevantRecipeBookForMeals = RecipeBook();
     for (dynamic m in meals) {
-      //print("We want $m");
       for (Recipe r in userData.getRecipeBook().getRecipesWithCategory(m)) {
-        //print("Inspect recipe ${r.getRecipeName()} with ${r.getCategories()}");
         if (!relevantRecipeBookForMeals.contains(r)) {
           List<dynamic> finalCategories = r.getCategories().where((element) => meals.contains(element)).toList();
-          //print("Adding ${r.getRecipeName()} with $finalCategories");
           Recipe newRecipe = Recipe(r.getRecipeName(), r.getPortionSize(), r.getIngredients(), finalCategories);
           relevantRecipeBookForMeals.addRecipe(newRecipe);
         }
       }
     }
-
-    //print("Relevant recipebook DONE");
 
     // Only consider ingredients from recipes that can be scheduled.
     // e.g. if mushroom is needed for a lunch item only, but we wish to schedule breakfast only, do not include
@@ -45,12 +39,6 @@ class MealPlanner {
         }
       }
     }
-
-    for (Ingredient i in userData.getPantry().getPantryItems()) {
-      print("${i.getIngredientTag()} : ${i.getQuantity()}");
-    }
-
-    print("Relevant ingredients DONE");
 
     Map<String, dynamic> generateJson() => {
       "day": [for (String d in days) d],
@@ -92,23 +80,10 @@ class MealPlanner {
 
     Map<String, dynamic> json = generateJson();
 
-    //print("JSON DONE");
-
     var finalJson = jsonEncode(json);
-    //print(finalJson);
     return finalJson;
-
-    // TODO: meal plan (as a file)
-
-    // TODO: shopping list
-    //List<IngredientBuilder> shopping_list = [];
-
-    //var process = await Process.start('cat', []);
-    //print(process.stdout);
-
   }
 
-  // TODO: delete once we have a real pantry
   // Testing purposes only!
   Pantry generateTestPantry() {
     Pantry testPantry = Pantry();
@@ -127,7 +102,7 @@ class MealPlanner {
     return testPantry;
   }
 
-  // TODO: delete once we have a real recipeBook
+  // Testing purposes only!
   RecipeBook generateTestRecipeBook() {
     RecipeBook testRecipeBook = RecipeBook();
 
@@ -155,6 +130,7 @@ class MealPlanner {
     return testRecipeBook;
   }
 
+  // Testing purposes only!
   WebShop generateWebShop() {
     WebShop testWebShop = WebShop();
 

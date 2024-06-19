@@ -20,8 +20,6 @@ Future<List<String>> getUnitsForCategoryFromDB(String category) async {
     }
   }
 
-  //List<String> units = List<String>.from(entry["possibleUnits"]);
-  print("units is $possibleUnits");
   return possibleUnits;
 }
 
@@ -45,7 +43,5 @@ Future<List<String>> getUnitsForIngredientFromDB(String ingredientName) async {
     }
   }
 
-  //List<String> units = List<String>.from(entry["possibleUnits"]);
-  print("units is $possibleUnits");
   return possibleUnits;
 }

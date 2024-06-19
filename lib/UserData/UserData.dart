@@ -49,7 +49,6 @@ class UserData {
       userExists = true;
     } else {
       // new user
-      print("File does not exists = user does not exists");
       userExists = false;
     }
 
@@ -58,9 +57,6 @@ class UserData {
 
   void parseUserDataFromJson(String json) {
     final Map<String, dynamic> parsedJson = jsonDecode(json);
-
-    //print(parsedJson["mealPlanCollection"]);
-    //print(parsedJson["shoppingList"]);
 
     _userName = parsedJson['userName'];
     _sex = parsedJson["sex"];
@@ -72,9 +68,9 @@ class UserData {
     _unwantedIngredients = parseUnwantedIngredients(parsedJson["unwantedIngredients"]);
     _pantry = parsePantry(parsedJson["pantry"]);
     _recipeBook = parseRecipeBook(parsedJson["recipeBook"]);
-    _mealPlanCollection = parseMealPlanCollection(parsedJson["mealPlanCollection"]);
-    _nutritionalInformation = parseNutritionalInformation(parsedJson["nutritionalTargets"]);
-    _shoppingList = parseShoppingList(parsedJson["shoppingList"]);
+    _mealPlanCollection = parseMealPlanCollection(parsedJson["mealPlanCollection"] ?? {});
+    _nutritionalInformation = parseNutritionalInformation(parsedJson["nutritionalTargets"] ?? {});
+    _shoppingList = parseShoppingList(parsedJson["shoppingList"] ?? {});
   }
 
   ShoppingList parseShoppingList(Map<String, dynamic> parsedJson) {
@@ -91,7 +87,6 @@ class UserData {
       int quantity = entry["quantity"];
       String unit = entry["unit"];
       String category = entry["category"];
-      print("$ingredientTag with $quantity $unit and $category is parsed.");
       // TODO: QUANTITY, UNIT, CATEGORY, NUTRITION
       NutritionalInformation n = NutritionalInformation(Fats(0, 0), Saturates(0,0), Carbs(0,0), Sugars(0,0), Protein(0,0), Salt(0,0));
       ShoppingListItem i = ShoppingListItem(intendedRecipeName, ingredientTag, amountToBuy, storeName, price, ingredientName, quantity, unit, category, n, isTicked);
@@ -112,12 +107,12 @@ class UserData {
   }
 
   NutritionalInformation? parseNutritionalInformation(Map<String, dynamic> parsedJson) {
-    Fats? fats;
-    Saturates? saturates;
-    Carbs? carbs;
-    Sugars? sugars;
-    Protein? protein;
-    Salt? salt;
+    Fats fats = Fats(0, 0);
+    Saturates saturates = Saturates(0, 0);
+    Carbs carbs = Carbs(0,0);
+    Sugars sugars = Sugars(0,0);
+    Protein protein = Protein(0,0);
+    Salt salt = Salt(0,0);
 
     NutritionalInformation? nutritionalInformation;
 
@@ -240,8 +235,6 @@ class UserData {
                 "shoppingList": ${_shoppingList.toJson()}
               }
           ''');
-    //print("Saved shoppingList $_shoppingList");
-    print("Saved.");
   }
 
   // GETTERS

@@ -5,17 +5,17 @@ class Pantry {
   final List<Ingredient> _ingredients = [];
 
   putInPantry(Ingredient ingredient) {
-    //ingredient.buy();
+    if (ingredient.getIngredientName() == "") {
+      _ingredients.add(ingredient);
+      return;
+    }
     for (Ingredient pantryItem in _ingredients) {
       if (ingredient.getIngredientName() == pantryItem.getIngredientName()) {
-        print("WE FOUND the pantry item as ${pantryItem.getIngredientName()} with ${pantryItem.getQuantity()} ${pantryItem.getUnit()}");
         int previousQuantity = pantryItem.getQuantity();
         pantryItem.updateQuantity(previousQuantity + ingredient.getQuantity());
-        print("PUTTING IN PANTRY ${pantryItem.getIngredientName()} with $previousQuantity to ${pantryItem.getQuantity()}");
         return;
       }
     }
-    print("PUTTING AS NEW PANTRY ITEM");
     _ingredients.add(ingredient);
   }
 
@@ -31,10 +31,7 @@ class Pantry {
   Ingredient useGenericFromPantry(String ingredientTag, int amountToUse, String unitToUse) {
     // check if ingredient exists in pantry.
     Iterable<String> ingTags = _ingredients.map((Ingredient i) => i.getIngredientTag());
-    for (String i in ingTags) {
-      print("$i is in the pantry.");
-    }
-    print("we are looking for $ingredientTag");
+
     if (!ingTags.contains(ingredientTag)) throw "Pantry does not contain this ingredient";
 
     // retrieve pantry item
@@ -60,13 +57,9 @@ class Pantry {
 
     // update quantity of ingredient in pantry.
     pantryItem.updateQuantity(pantryItemQuantity - amountToUse);
-    print("USING FROM ${pantryItem.getIngredientName()}");
-    print("pantry item $ingredientTag quantity is updated from $pantryItemQuantity to ${pantryItemQuantity - amountToUse}");
     // remove item completely if ingredient ran out.
     if (pantryItem.getQuantity() == 0) {
       removeFromPantry(pantryItem);
-      print("USED UP ${pantryItem.getIngredientName()}");
-      print("pantry item $ingredientTag is removed from the pantry");
     }
     return pantryItem.copy();
   }
@@ -75,10 +68,7 @@ class Pantry {
   useFromPantry(String ingredientName, int amountToUse, String unitToUse) {
     // check if ingredient exists in pantry.
     Iterable<String> ingNames = _ingredients.map((Ingredient i) => i.getIngredientName());
-    for (String i in ingNames) {
-      print("$i is in the pantry.");
-    }
-    print("we are looking for $ingredientName");
+
     if (!ingNames.contains(ingredientName)) throw "Pantry does not contain this ingredient";
 
     // retrieve pantry item
@@ -104,11 +94,9 @@ class Pantry {
 
     // update quantity of ingredient in pantry.
     pantryItem.updateQuantity(pantryItemQuantity - amountToUse);
-    print("pantry item $ingredientName quantity is updated from $pantryItemQuantity to ${pantryItemQuantity - amountToUse}");
     // remove item completely if ingredient ran out.
     if (pantryItem.getQuantity() == 0) {
       removeFromPantry(pantryItem);
-      print("pantry item $ingredientName is removed from the pantry");
     }
   }
 
@@ -146,11 +134,9 @@ class Pantry {
   Ingredient? contains(Ingredient ingredient) {
     for (Ingredient i in _ingredients) {
       if (i.getIngredientTag() == ingredient.getIngredientTag()) {
-        print("It contains ${i.getIngredientTag()}");
         return i;
       }
     }
-    print("It does NOT contain ${ingredient.getIngredientTag()}");
     return null;
   }
 }
